@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Threading.Tasks;
 using DSP.Reading.Content;
 using DSP.Utils;
 
@@ -14,18 +13,13 @@ namespace DSP.Reading
             _fileContentProviderFactory = fileContentProviderFactory;
         }
 
-        public FileParserResult ParseFile(string fileName)
+        public async Task<FileParserResult> ParseFileAsync(string fileName)
         {
             Throw.IfNullOrEmpty(fileName, nameof(fileName));
 
-            FileParserResult fileParserResult;
+            IFileContentProvider fileContentProvider = _fileContentProviderFactory.Create(fileName);
 
-            using (var fileContentProvider = _fileContentProviderFactory.Create(fileName))
-            {
-                FileMetadata metadata = fileContentProvider.ReadMetadata();
-                IEnumerable<float> signalValues = fileContentProvider.ReadContent();
-                fileParserResult = new FileParserResult(metadata, signalValues.ToList());
-            }
+            FileParserResult fileParserResult = await fileContentProvider.ReadEntireContentAsync();
 
             return fileParserResult;
         }

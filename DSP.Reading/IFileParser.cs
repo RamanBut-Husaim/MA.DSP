@@ -1,7 +1,9 @@
-﻿namespace DSP.Reading
+﻿using System.Threading.Tasks;
+
+namespace DSP.Reading
 {
     public interface IFileParser
     {
-        FileParserResult ParseFile(string fileName);
+        Task<FileParserResult> ParseFileAsync(string fileName);
     }
 }

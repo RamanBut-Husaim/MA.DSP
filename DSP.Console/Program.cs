@@ -19,7 +19,7 @@ namespace DSP.Console
                 using (var scope = container.BeginScope())
                 {
                     IFileParser fileParser = container.GetInstance<IFileParser>();
-                    FileParserResult parseResult = fileParser.ParseFile(argument.Path);
+                    FileParserResult parseResult = fileParser.ParseFileAsync(argument.Path).Result;
                 }
             }
         }

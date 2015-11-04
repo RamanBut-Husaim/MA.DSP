@@ -1,83 +1,161 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using DSP.Utils;
 
 namespace DSP.Reading.Content
 {
     public sealed class FileContentProvider : IFileContentProvider
     {
-        private readonly BinaryReader _reader;
-        private bool _disposed;
+        private const int DefaultBufferSize = 1024;
+        private readonly string _fileName;
 
         public FileContentProvider(string fileName)
         {
             Throw.IfNullOrEmpty(fileName, nameof(fileName));
-            _reader = new BinaryReader(File.OpenRead(fileName), Encoding.ASCII);
+            _fileName = fileName;
+        }
+
+        public async Task<FileParserResult> ReadEntireContentAsync()
+        {
+            byte[] content;
+            int readBytes;
+            using (var fileStream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.None, DefaultBufferSize, FileOptions.Asynchronous))
+            {
+                content = new byte[fileStream.Length];
+                readBytes = await fileStream.ReadAsync(content, 0, content.Length);
+            }
+
+            using (var memoryStream = new MemoryStream(content, 0, readBytes, false))
+            {
+                return this.ReadEntireContentFromStream(memoryStream);
+            }
+        }
+
+        private FileParserResult ReadEntireContentFromStream(Stream stream)
+        {
+            using (var binaryReader = new BinaryReader(stream, Encoding.ASCII))
+            {
+                FileMetadata metadata = this.ReadMetadataFromBinaryStream(binaryReader);
+                IList<float> dataPoints = this.ReadDataPointsFromBinaryStream(binaryReader);
+                return new FileParserResult(metadata, dataPoints);
+            }
         }
 
         public FileMetadata ReadMetadata()
         {
-            this.VerifyDisposed();
+            FileMetadata result;
+            using (var fileStream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.None, DefaultBufferSize, FileOptions.None))
+            {
+                result = this.ReadMetadataFromStream(fileStream);
+            }
 
-            _reader.BaseStream.Seek(0, SeekOrigin.Begin);
-            var fileMetadata = FileMetadata.Builder()
-                .WithSignature(_reader.ReadChars(FileMetadata.SignatureSize))
-                .WithChannelNumber(_reader.ReadInt32())
-                .WithChannelSize(_reader.ReadInt32())
-                .WithSpectrumLineNumber(_reader.ReadInt32())
-                .WithCutoffFrequency(_reader.ReadInt32())
-                .WithFrequencyDefinition(_reader.ReadSingle())
-                .WithDataBlockReceiveTime(_reader.ReadSingle())
-                .WithTotalReceiveTime(_reader.ReadInt32())
-                .WithDataBlockNumber(_reader.ReadInt32())
-                .WithDataSize(_reader.ReadInt32())
-                .WithReceivedBlocksNumber(_reader.ReadInt32())
-                .WithMaxValue(_reader.ReadSingle())
-                .WithMinValue(_reader.ReadSingle())
+            return result;
+        }
+
+        public async Task<FileMetadata> ReadMetadataAsync()
+        {
+            FileMetadata result;
+
+            byte[] metadataContent = new byte[FileMetadata.Size];
+            using (var fileStream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.None, DefaultBufferSize, FileOptions.Asynchronous))
+            {
+                await fileStream.ReadAsync(metadataContent, 0, FileMetadata.Size).ConfigureAwait(false);
+            }
+
+            using (var memoryStream = new MemoryStream(metadataContent, false))
+            {
+                result = this.ReadMetadataFromStream(memoryStream);
+            }
+
+            return result;
+        }
+
+        private FileMetadata ReadMetadataFromStream(Stream stream)
+        {
+            FileMetadata result;
+            using (var binaryReader = new BinaryReader(stream, Encoding.ASCII))
+            {
+                result = this.ReadMetadataFromBinaryStream(binaryReader);
+            }
+
+            return result;
+        }
+
+        private FileMetadata ReadMetadataFromBinaryStream(BinaryReader binaryReader)
+        {
+            var result = FileMetadata.Builder()
+                .WithSignature(binaryReader.ReadChars(FileMetadata.SignatureSize))
+                .WithChannelNumber(binaryReader.ReadInt32())
+                .WithChannelSize(binaryReader.ReadInt32())
+                .WithSpectrumLineNumber(binaryReader.ReadInt32())
+                .WithCutoffFrequency(binaryReader.ReadInt32())
+                .WithFrequencyDefinition(binaryReader.ReadSingle())
+                .WithDataBlockReceiveTime(binaryReader.ReadSingle())
+                .WithTotalReceiveTime(binaryReader.ReadInt32())
+                .WithDataBlockNumber(binaryReader.ReadInt32())
+                .WithDataSize(binaryReader.ReadInt32())
+                .WithReceivedBlocksNumber(binaryReader.ReadInt32())
+                .WithMaxValue(binaryReader.ReadSingle())
+                .WithMinValue(binaryReader.ReadSingle())
                 .AsMetadata();
 
-            return fileMetadata;
+            return result;
         }
 
         public IEnumerable<float> ReadContent()
         {
-            this.VerifyDisposed();
-
-            var dataPoints = new List<float>();
-            _reader.BaseStream.Seek(FileMetadata.Size, SeekOrigin.Begin);
-            while (_reader.PeekChar() != -1)
+            using (var fileStream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.None, DefaultBufferSize, FileOptions.None))
             {
-                dataPoints.Add(_reader.ReadSingle());
+                return this.ReadDataPointsFromStream(fileStream);
+            }
+        }
+
+        public async Task<IEnumerable<float>> ReadContentAsync()
+        {
+            IList<float> dataPoints;
+
+            byte[] fileContent;
+            int readBytes;
+
+            using (var fileStream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.None, DefaultBufferSize, FileOptions.Asynchronous))
+            {
+                fileContent = new byte[fileStream.Length - FileMetadata.SignatureSize];
+
+                readBytes = await fileStream.ReadAsync(fileContent, FileMetadata.Size, fileContent.Length);
+            }
+
+            using (var memoryStream = new MemoryStream(fileContent, 0, readBytes, false))
+            {
+                dataPoints = this.ReadDataPointsFromStream(memoryStream);
+            }
+
+            return dataPoints;
+        }
+
+        private IList<float> ReadDataPointsFromStream(Stream stream)
+        {
+            IList<float> dataPoints;
+
+            using (var binaryReader = new BinaryReader(stream, Encoding.ASCII))
+            {
+                dataPoints = this.ReadDataPointsFromBinaryStream(binaryReader);
+            }
+
+            return dataPoints;
+        }
+
+        private IList<float> ReadDataPointsFromBinaryStream(BinaryReader binaryReader)
+        {
+            var dataPoints = new List<float>();
+
+            while (binaryReader.PeekChar() != -1)
+            {
+                dataPoints.Add(binaryReader.ReadSingle());
             }
 
             return dataPoints;
         } 
-
-        private void VerifyDisposed()
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException("The object has already been disposed.");
-            }
-        }
-
-        public void Dispose()
-        {
-            this.Dispose(true);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _reader.Dispose();
-                    _disposed = true;
-                }
-            }
-        }
     }
 }
