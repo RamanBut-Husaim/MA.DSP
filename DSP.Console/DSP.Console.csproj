@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D7176FBD-317B-4AD4-840F-824E3228A021}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{D4074873-FA7D-48F4-9544-241100C406E1}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DSP.Reading</RootNamespace>
-    <AssemblyName>DSP.Reading</AssemblyName>
+    <RootNamespace>DSP.Console</RootNamespace>
+    <AssemblyName>DSP.Console</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,6 +33,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentCommandLineParser, Version=1.4.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentCommandLineParser.1.4.3\lib\net35\FluentCommandLineParser.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="LightInject, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LightInject.4.0.0\lib\net46\LightInject.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,17 +51,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Content\FileContentProvider.cs" />
-    <Compile Include="Content\FileContentProviderFactory.cs" />
-    <Compile Include="Content\IFileContentProviderFactory.cs" />
-    <Compile Include="FileParser.cs" />
-    <Compile Include="Content\FileMetadata.cs" />
-    <Compile Include="FileParserResult.cs" />
-    <Compile Include="Content\IFileContentProvider.cs" />
-    <Compile Include="IFileParser.cs" />
+    <Compile Include="Setup\Arguments.cs" />
+    <Compile Include="LightInject\LightInject.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Setup\CompositionRoot.cs" />
+    <Compile Include="Setup\ParserBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DSP.Reading\DSP.Reading.csproj">
+      <Project>{d7176fbd-317b-4ad4-840f-824e3228a021}</Project>
+      <Name>DSP.Reading</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DSP.Utils\DSP.Utils.csproj">
       <Project>{7d34018c-35f0-495d-99cf-d17c3d354722}</Project>
       <Name>DSP.Utils</Name>

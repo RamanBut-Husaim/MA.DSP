@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D7176FBD-317B-4AD4-840F-824E3228A021}</ProjectGuid>
+    <ProjectGuid>{7D34018C-35F0-495D-99CF-D17C3D354722}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DSP.Reading</RootNamespace>
-    <AssemblyName>DSP.Reading</AssemblyName>
+    <RootNamespace>DSP.Utils</RootNamespace>
+    <AssemblyName>DSP.Utils</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,21 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Content\FileContentProvider.cs" />
-    <Compile Include="Content\FileContentProviderFactory.cs" />
-    <Compile Include="Content\IFileContentProviderFactory.cs" />
-    <Compile Include="FileParser.cs" />
-    <Compile Include="Content\FileMetadata.cs" />
-    <Compile Include="FileParserResult.cs" />
-    <Compile Include="Content\IFileContentProvider.cs" />
-    <Compile Include="IFileParser.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DSP.Utils\DSP.Utils.csproj">
-      <Project>{7d34018c-35f0-495d-99cf-d17c3d354722}</Project>
-      <Name>DSP.Utils</Name>
-    </ProjectReference>
+    <Compile Include="Throw.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
