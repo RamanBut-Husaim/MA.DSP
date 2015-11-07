@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="clearfix">
+    <div class="pull-left">
+        <h1>DSP Processing</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <span class="btn btn-success fileinput-button">
+                <i class="glyphicon glyphicon-plus"></i>
+                <span>Select file...</span>
+                <input id="fileupload" type="file" name="files" multiple />
+            </span>
+        </div>
+        <div class="col-md-10">
+            <div id="progress" class="progress">
+                <div class="progress-bar progress-bar-success"></div>
+            </div>
+        </div>
+    </div>
+</div>
