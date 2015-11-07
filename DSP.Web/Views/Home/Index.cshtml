@@ -2,6 +2,10 @@
     ViewBag.Title = "Home Page";
 }
 
+@{
+    string fileUploadId = "fileUpload";
+}
+
 <div class="clearfix">
     <div class="pull-left">
         <h1>DSP Processing</h1>
@@ -13,13 +17,23 @@
             <span class="btn btn-success fileinput-button">
                 <i class="glyphicon glyphicon-plus"></i>
                 <span>Select file...</span>
-                <input id="fileupload" type="file" name="files" multiple />
+                <input id="@fileUploadId" type="file" name="files" data-url="@Url.Action("Upload", "FileUpload")" multiple />
             </span>
         </div>
         <div class="col-md-10">
-            <div id="progress" class="progress">
+            <div id="progress" class="progress margined">
                 <div class="progress-bar progress-bar-success"></div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(function() {
+            var fileUploader = new Dsp.DspFileUploader('fileUpload');
+            var dspService = new Dsp.DspService(fileUploader);
+            dspService.setup();
+        })
+    </script>
+}
