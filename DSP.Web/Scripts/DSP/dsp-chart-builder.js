@@ -14,12 +14,17 @@ var Dsp;
             $('#' + this._processButtonId).on('click', function () { return _this.retrieveChartData(url); });
         };
         DspChartBuilder.prototype.retrieveChartData = function (url) {
+            var _this = this;
             var fileName = $('#' + this._processButtonId).attr("data-file");
             if (fileName) {
                 $.post(url, { fileName: fileName }, function (data) {
-                    console.log(data);
+                    var chart = new Dsp.Chart(_this.getChartId(1), data);
+                    chart.draw();
                 }, 'json');
             }
+        };
+        DspChartBuilder.prototype.getChartId = function (index) {
+            return 'chartContainer_01';
         };
         return DspChartBuilder;
     })();

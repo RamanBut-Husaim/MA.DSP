@@ -21,9 +21,14 @@
             var fileName = $('#' + this._processButtonId).attr("data-file");
             if (fileName) {
                 $.post(url, { fileName: fileName }, (data) => {
-                    console.log(data);
+                    var chart: Chart = new Chart(this.getChartId(1), data);
+                    chart.draw();
                 }, 'json');
             }
+        }
+
+        private getChartId(index: number): string {
+            return 'chartContainer_01';
         }
     }
 }

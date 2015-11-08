@@ -27,8 +27,6 @@ namespace DSP.Web.Controllers
             SignalInfo signalInfo = await signalProcessor.ProcessFileAsync();
             SignalViewModel signalViewModel = SignalViewModelBuilder.Create(signalInfo, fileName);
 
-            //return this.Json(new {Sucess = "one"});
-
             return this.Json(signalViewModel);
         }
 

@@ -233,6 +233,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-chart-builder.ts" />
+    <TypeScriptCompile Include="Scripts\DSP\dsp-chart.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-file-uploader.ts" />
     <Content Include="Scripts\highcharts\4.1.5\adapters\standalone-framework.js" />
     <Content Include="Scripts\highcharts\4.1.5\adapters\standalone-framework.src.js" />
@@ -379,7 +380,6 @@
     <TypeScriptCompile Include="Scripts\DSP\dsp-service.ts" />
     <TypeScriptCompile Include="Scripts\typings\bootstrap\bootstrap.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\highcharts\highcharts.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\highcharts\highstock.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery.FileUpload\jquery.fileupload.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\modernizr\modernizr.d.ts" />

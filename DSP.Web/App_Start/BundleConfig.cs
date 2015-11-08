@@ -13,7 +13,8 @@ namespace DSP.Web
             bundles.Add(new ScriptBundle("~/bundles/dsp").Include(
                 "~/Scripts/DSP/dsp-file-uploader.js",
                 "~/Scripts/DSP/dsp-service.js",
-                "~/Scripts/DSP/dsp-chart-builder.js"));
+                "~/Scripts/DSP/dsp-chart-builder.js",
+                "~/Scripts/DSP/dsp-chart.js"));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
