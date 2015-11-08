@@ -20,8 +20,8 @@ namespace DSP.Web
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include("~/Scripts/modernizr-*"));
 
-            bundles.Add(new ScriptBundle("~/bundles/highcharts").Include("~/Scripts/highcharts/4.1.5/highcharts.src.js"));
-
+            //bundles.Add(new ScriptBundle("~/bundles/highcharts").Include("~/Scripts/highcharts/4.1.5/highcharts.src.js"));
+            bundles.Add(new ScriptBundle("~/bundles/highstock").Include("~/Scripts/highstock/2.1.8/highstock.src.js"));
             bundles.Add(new ScriptBundle("~/bundles/jquery.fileupload")
                 .Include("~/Scripts/jQuery.FileUpload/jquery.iframe-transport.js",
                         "~/Scripts/jQuery.FileUpload/jquery.fileupload.js"));

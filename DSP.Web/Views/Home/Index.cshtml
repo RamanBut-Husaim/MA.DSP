@@ -60,6 +60,8 @@
             var chartBuilder = new Dsp.DspChartBuilder('charts', 'processHandler');
             var dspService = new Dsp.DspService(fileUploader, chartBuilder);
             dspService.setup();
+            window.DSP = {};
+            window.DSP.service = dspService;
         })
     </script>
 }

@@ -379,7 +379,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\DSP\dsp-service.ts" />
     <TypeScriptCompile Include="Scripts\typings\bootstrap\bootstrap.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\highcharts\highcharts.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\highcharts\highstock.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery.FileUpload\jquery.fileupload.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\modernizr\modernizr.d.ts" />

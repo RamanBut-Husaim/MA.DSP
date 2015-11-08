@@ -15,11 +15,12 @@ var Dsp;
         };
         DspChartBuilder.prototype.retrieveChartData = function (url) {
             var _this = this;
+            var that = this;
             var fileName = $('#' + this._processButtonId).attr("data-file");
             if (fileName) {
                 $.post(url, { fileName: fileName }, function (data) {
-                    var chart = new Dsp.Chart(_this.getChartId(1), data);
-                    chart.draw();
+                    that._chart = new Dsp.Chart(_this.getChartId(1), data);
+                    that._chart.draw();
                 }, 'json');
             }
         };

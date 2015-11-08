@@ -2,6 +2,7 @@
     export class DspChartBuilder {
         private _chartContainerId: string;
         private _processButtonId: string;
+        private _chart: Chart;
 
         constructor(chartContainerId: string, processButtonId: string) {
             this._chartContainerId = chartContainerId;
@@ -18,11 +19,12 @@
         }
 
         public retrieveChartData(url: string): void {
+            const that = this;
             var fileName = $('#' + this._processButtonId).attr("data-file");
             if (fileName) {
                 $.post(url, { fileName: fileName }, (data) => {
-                    var chart: Chart = new Chart(this.getChartId(1), data);
-                    chart.draw();
+                    that._chart = new Chart(this.getChartId(1), data);
+                    that._chart.draw();
                 }, 'json');
             }
         }

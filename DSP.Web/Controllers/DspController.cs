@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.SessionState;
@@ -28,6 +29,18 @@ namespace DSP.Web.Controllers
             SignalViewModel signalViewModel = SignalViewModelBuilder.Create(signalInfo, fileName);
 
             return this.Json(signalViewModel);
+        }
+
+        protected override JsonResult Json(object data, string contentType, System.Text.Encoding contentEncoding, JsonRequestBehavior behavior)
+        {
+            return new JsonResult
+            {
+                Data = data,
+                ContentType = contentType,
+                ContentEncoding = contentEncoding,
+                JsonRequestBehavior = behavior,
+                MaxJsonLength = int.MaxValue
+            };
         }
 
         private string GetFileFullPath(string fileName)
