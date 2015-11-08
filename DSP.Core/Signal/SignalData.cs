@@ -24,12 +24,9 @@ namespace DSP.Core.Signal
         {
             var result = new List<double>(values.Count);
 
-            for (int i = 0; i < values.Count; ++i)
-            {
-                result[i] = values[i];
-            }
+            result.AddRange(values.Select(t => (double) t));
 
             return result;
-        } 
+        }
     }
 }

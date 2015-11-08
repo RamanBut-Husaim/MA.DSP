@@ -19,7 +19,7 @@ namespace DSP.Core.Characteristics.Implementation
 
             for (int i = startPoint; i < endPoint; ++i)
             {
-                if (maxValue > this.SignalData.Values[i])
+                if (maxValue < this.SignalData.Values[i])
                 {
                     maxValue = this.SignalData.Values[i];
                 }

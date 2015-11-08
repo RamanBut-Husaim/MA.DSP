@@ -61,7 +61,7 @@ namespace DSP.Reading.Content
             byte[] metadataContent = new byte[FileMetadata.Size];
             using (var fileStream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.None, DefaultBufferSize, FileOptions.Asynchronous))
             {
-                await fileStream.ReadAsync(metadataContent, 0, FileMetadata.Size).ConfigureAwait(false);
+                await fileStream.ReadAsync(metadataContent, 0, FileMetadata.Size);
             }
 
             using (var memoryStream = new MemoryStream(metadataContent, false))
@@ -156,6 +156,6 @@ namespace DSP.Reading.Content
             }
 
             return dataPoints;
-        } 
+        }
     }
 }

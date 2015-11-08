@@ -130,14 +130,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\Bootstrapper.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\CompositionRoot.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\FileUploadController.cs" />
+    <Compile Include="Controllers\DspController.cs" />
+    <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\File\SignalCharacteristicsViewModel.cs" />
+    <Compile Include="Models\File\SignalDataPoint.cs" />
+    <Compile Include="Models\File\SignalMetadataViewModel.cs" />
+    <Compile Include="Models\File\SignalViewModel.cs" />
+    <Compile Include="Models\File\SignalViewModelBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +232,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <TypeScriptCompile Include="Scripts\DSP\dsp-chart-builder.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-file-uploader.ts" />
     <Content Include="Scripts\highcharts\4.1.5\adapters\standalone-framework.js" />
     <Content Include="Scripts\highcharts\4.1.5\adapters\standalone-framework.src.js" />
@@ -261,6 +270,45 @@
     <Content Include="Scripts\highcharts\4.1.5\themes\grid.js" />
     <Content Include="Scripts\highcharts\4.1.5\themes\sand-signika.js" />
     <Content Include="Scripts\highcharts\4.1.5\themes\skies.js" />
+    <Content Include="Scripts\highstock\2.1.8\adapters\standalone-framework.js" />
+    <Content Include="Scripts\highstock\2.1.8\adapters\standalone-framework.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\highcharts-3d.js" />
+    <Content Include="Scripts\highstock\2.1.8\highcharts-3d.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\highcharts-more.js" />
+    <Content Include="Scripts\highstock\2.1.8\highcharts-more.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\highstock-all.js" />
+    <Content Include="Scripts\highstock\2.1.8\highstock.js" />
+    <Content Include="Scripts\highstock\2.1.8\highstock.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\boost.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\boost.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\canvas-tools.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\canvas-tools.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\data.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\data.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\drilldown.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\drilldown.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\exporting.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\exporting.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\funnel.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\funnel.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\heatmap.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\heatmap.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\no-data-to-display.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\no-data-to-display.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\offline-exporting.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\offline-exporting.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\solid-gauge.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\solid-gauge.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\treemap.js" />
+    <Content Include="Scripts\highstock\2.1.8\modules\treemap.src.js" />
+    <Content Include="Scripts\highstock\2.1.8\themes\dark-blue.js" />
+    <Content Include="Scripts\highstock\2.1.8\themes\dark-green.js" />
+    <Content Include="Scripts\highstock\2.1.8\themes\dark-unica.js" />
+    <Content Include="Scripts\highstock\2.1.8\themes\gray.js" />
+    <Content Include="Scripts\highstock\2.1.8\themes\grid-light.js" />
+    <Content Include="Scripts\highstock\2.1.8\themes\grid.js" />
+    <Content Include="Scripts\highstock\2.1.8\themes\sand-signika.js" />
+    <Content Include="Scripts\highstock\2.1.8\themes\skies.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
@@ -304,7 +352,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
+    <Folder Include="Content\Upload\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -317,6 +365,10 @@
     <ProjectReference Include="..\DSP.Reading\DSP.Reading.csproj">
       <Project>{d7176fbd-317b-4ad4-840f-824e3228a021}</Project>
       <Name>DSP.Reading</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DSP.Services\DSP.Services.csproj">
+      <Project>{21a7464d-78d8-450b-8d5e-49a8081953dd}</Project>
+      <Name>DSP.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\DSP.Utils\DSP.Utils.csproj">
       <Project>{7d34018c-35f0-495d-99cf-d17c3d354722}</Project>

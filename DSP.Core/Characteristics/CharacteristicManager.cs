@@ -19,6 +19,8 @@ namespace DSP.Core.Characteristics
             _characteristicBuilder = characteristicBuilder;
         }
 
+        public SignalData SignalData => _signalData;
+
         public ICharacteristic<T> Characteristic<T>(Expression<Func<CharacteristicSelector, ICharacteristic<T>>> selector)
         {
             Throw.IfNull(selector, nameof(selector));

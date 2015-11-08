@@ -19,7 +19,7 @@ namespace DSP.Core.Characteristics.Implementation
 
             for (int i = startPoint; i < endPoint; ++i)
             {
-                if (minValue < this.SignalData.Values[i])
+                if (minValue > this.SignalData.Values[i])
                 {
                     minValue = this.SignalData.Values[i];
                 }

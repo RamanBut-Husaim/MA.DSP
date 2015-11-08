@@ -16,7 +16,7 @@ namespace DSP.Core.Characteristics.Implementation
             double sum = 0;
             for (int i = startPoint; i < endPoint; ++i)
             {
-                sum += (this.SignalData.Values[i] * 2);
+                sum += (this.SignalData.Values[i] * this.SignalData.Values[i]);
             }
 
             sum = sum / pointNumber;

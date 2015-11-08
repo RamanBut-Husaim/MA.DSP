@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSP.Core", "DSP.Core\DSP.Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSP.Web", "DSP.Web\DSP.Web.csproj", "{0AFF9122-BDBE-4F8C-8C6E-A48C96CD6D11}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSP.Services", "DSP.Services\DSP.Services.csproj", "{21A7464D-78D8-450B-8D5E-49A8081953DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{0AFF9122-BDBE-4F8C-8C6E-A48C96CD6D11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AFF9122-BDBE-4F8C-8C6E-A48C96CD6D11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AFF9122-BDBE-4F8C-8C6E-A48C96CD6D11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21A7464D-78D8-450B-8D5E-49A8081953DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21A7464D-78D8-450B-8D5E-49A8081953DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21A7464D-78D8-450B-8D5E-49A8081953DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21A7464D-78D8-450B-8D5E-49A8081953DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

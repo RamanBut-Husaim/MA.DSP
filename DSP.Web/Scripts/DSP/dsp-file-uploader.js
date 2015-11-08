@@ -1,14 +1,21 @@
 var Dsp;
 (function (Dsp) {
     var DspFileUploader = (function () {
-        function DspFileUploader(fileUploadControlId) {
+        function DspFileUploader(fileUploadControlId, processButtonId) {
             this._fileUploadControlId = fileUploadControlId;
+            this._processButtonId = processButtonId;
         }
-        DspFileUploader.prototype.initializeFileUpload = function () {
+        DspFileUploader.prototype.subscribeToFileUpload = function () {
+            var that = this;
             $('#' + this._fileUploadControlId).fileupload({
                 dataType: 'json',
                 done: function (e, data) {
-                    console.log("one");
+                    $('#' + that._processButtonId)
+                        .removeClass('hidden')
+                        .attr('data-file', data.result.File);
+                },
+                fail: function (e, data) {
+                    $('#' + that._processButtonId).addClass('hidden');
                 },
                 progressall: function (e, data) {
                     var progress = parseInt((data.loaded / data.total * 100).toString(), 10);
