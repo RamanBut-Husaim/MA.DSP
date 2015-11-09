@@ -30,22 +30,22 @@
         </div>
     </div>
     <div id="charts" class="row">
-        <div class="panel panel-primary">
+        <div id="series_1" class="panel panel-primary">
             <div class="panel-heading">
                 Chart To Display
             </div>
             <div class="panel-body">
                 <div class="row chartCharacteristics">
-                    <div class="col-md-2">Min Value <span class="label label-default">0.0</span></div>
-                    <div class="col-md-2">Max Value <span class="label label-default">0.0</span></div>
-                    <div class="col-md-2">Peak Factor <span class="label label-default">0.0</span></div>
-                    <div class="col-md-2">Peek To Peek <span class="label label-default">0.0</span></div>
-                    <div class="col-md-2">Standard Deviation <span class="label label-default">0.0</span></div>
+                    <div class="col-md-2" data-type="minValue">Min Value <span class="label label-default">0.0</span></div>
+                    <div class="col-md-2" data-type="maxValue">Max Value <span class="label label-default">0.0</span></div>
+                    <div class="col-md-2" data-type="peakFactor">Peak Factor <span class="label label-default">0.0</span></div>
+                    <div class="col-md-2" data-type="peekToPeek">Peek To Peek <span class="label label-default">0.0</span></div>
+                    <div class="col-md-2" data-type="standardDeviation">Standard Deviation <span class="label label-default">0.0</span></div>
                 </div>
-                <div class="row chartContainer" id="chartContainer_01">
+                <div class="row chartContainer" id="chartContainer_1">
                     Chart Container
                 </div>
-                <div class="row chartContainer" id="chartContainer_02">
+                <div class="row chartContainer" id="chartContainer_2">
                     Spectrum
                 </div>
             </div>
@@ -57,7 +57,7 @@
     <script type="text/javascript">
         $(function() {
             var fileUploader = new Dsp.DspFileUploader('fileUpload', 'processHandler');
-            var chartBuilder = new Dsp.DspChartBuilder('charts', 'processHandler');
+            var chartBuilder = new Dsp.DspChartBuilder('chartContainer_', 'series_', 'processHandler');
             var dspService = new Dsp.DspService(fileUploader, chartBuilder);
             dspService.setup();
             window.DSP = {};

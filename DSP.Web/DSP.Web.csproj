@@ -232,45 +232,11 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
+    <TypeScriptCompile Include="Scripts\DSP\dsp-characteristics.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-chart-builder.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-chart.ts" />
+    <TypeScriptCompile Include="Scripts\DSP\dsp-data-point.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-file-uploader.ts" />
-    <Content Include="Scripts\highcharts\4.1.5\adapters\standalone-framework.js" />
-    <Content Include="Scripts\highcharts\4.1.5\adapters\standalone-framework.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\highcharts-3d.js" />
-    <Content Include="Scripts\highcharts\4.1.5\highcharts-3d.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\highcharts-more.js" />
-    <Content Include="Scripts\highcharts\4.1.5\highcharts-more.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\highcharts.js" />
-    <Content Include="Scripts\highcharts\4.1.5\highcharts.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\broken-axis.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\broken-axis.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\canvas-tools.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\canvas-tools.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\data.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\data.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\drilldown.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\drilldown.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\exporting.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\exporting.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\funnel.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\funnel.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\heatmap.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\heatmap.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\no-data-to-display.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\no-data-to-display.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\solid-gauge.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\solid-gauge.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\treemap.js" />
-    <Content Include="Scripts\highcharts\4.1.5\modules\treemap.src.js" />
-    <Content Include="Scripts\highcharts\4.1.5\themes\dark-blue.js" />
-    <Content Include="Scripts\highcharts\4.1.5\themes\dark-green.js" />
-    <Content Include="Scripts\highcharts\4.1.5\themes\dark-unica.js" />
-    <Content Include="Scripts\highcharts\4.1.5\themes\gray.js" />
-    <Content Include="Scripts\highcharts\4.1.5\themes\grid-light.js" />
-    <Content Include="Scripts\highcharts\4.1.5\themes\grid.js" />
-    <Content Include="Scripts\highcharts\4.1.5\themes\sand-signika.js" />
-    <Content Include="Scripts\highcharts\4.1.5\themes\skies.js" />
     <Content Include="Scripts\highstock\2.1.8\adapters\standalone-framework.js" />
     <Content Include="Scripts\highstock\2.1.8\adapters\standalone-framework.src.js" />
     <Content Include="Scripts\highstock\2.1.8\highcharts-3d.js" />
@@ -337,6 +303,7 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\spin.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -350,6 +317,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <TypeScriptCompile Include="Scripts\typings\spin\spin.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -379,6 +347,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\DSP\dsp-service.ts" />
     <TypeScriptCompile Include="Scripts\typings\bootstrap\bootstrap.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\highcharts\highcharts.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\highcharts\highstock.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery.FileUpload\jquery.fileupload.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />

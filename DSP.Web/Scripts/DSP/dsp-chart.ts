@@ -4,10 +4,12 @@ module Dsp {
     export class Chart {
         private _containerId: string;
         private _chartData: ChartData;
+        private _characteristicCalculator: CharacteristicCalculator;
 
-        constructor(containerId: string, jsonData: any) {
+        constructor(containerId: string, seriesId: string, jsonData: any) {
             this._containerId = containerId;
-            this._chartData = new ChartData(jsonData);
+            this._chartData = new ChartData(seriesId, jsonData);
+            this._characteristicCalculator = new CharacteristicCalculator(this._chartData.dataPoints);
         }
 
         get containerId(): string {
@@ -16,8 +18,21 @@ module Dsp {
 
         public draw(): void {
             const that = this;
-            var chartBuilder = new ChartConfigurationBuilder(this._chartData);
+            var chartBuilder = new ChartConfigurationBuilder(this._chartData, this);
             $('#' + this._containerId).highcharts("StockChart", chartBuilder.createConfiguration());
+        }
+
+        public characteristicUpdater(startPoint: number, endPoint: number): void {
+            var characteristicResult: ICharacteristicResult = this._characteristicCalculator.calculate(startPoint, endPoint);
+            this.setupCharecteristics(characteristicResult);
+        }
+
+        private setupCharecteristics(characteristicsResult: ICharacteristicResult): void {
+            this._chartData.characteristics.maxValue = characteristicsResult.maxValue;
+            this._chartData.characteristics.minValue = characteristicsResult.minValue;
+            this._chartData.characteristics.peakFactor = characteristicsResult.peakFactor;
+            this._chartData.characteristics.peekToPeek = characteristicsResult.peekToPeek;
+            this._chartData.characteristics.standardDeviation = characteristicsResult.standardDeviation;
         }
     }
 
@@ -28,9 +43,9 @@ module Dsp {
         private _data: Array<DataPoint>;
         private _dataPointMap: IDataPointMap;
 
-        constructor(jsonObject: any) {
+        constructor(seriesId: string, jsonObject: any) {
             this._fileName = jsonObject.FileName;
-            this._characteristics = new Characteristics(jsonObject.Characteristics);
+            this._characteristics = new Characteristics(seriesId, jsonObject.Characteristics);
             this._signalMetadata = new SignalMetadata(jsonObject.SignalMetadata);
             this._data = new Array<DataPoint>();
             this._dataPointMap = {};
@@ -69,6 +84,10 @@ module Dsp {
             });
         }
 
+        get dataPoints(): Array<DataPoint> {
+            return this._data;
+        }
+
         get dataMap(): IDataPointMap {
             return this._dataPointMap;
         }
@@ -76,9 +95,11 @@ module Dsp {
 
     class ChartConfigurationBuilder {
         private _chartData: ChartData;
+        private _chart : Chart;
 
-        constructor(chartData: ChartData) {
+        constructor(chartData: ChartData, chart: Chart) {
             this._chartData = chartData;
+            this._chart = chart;
         }
 
         public createConfiguration(): HighstockOptions {
@@ -89,6 +110,11 @@ module Dsp {
                     zoomType: "x",
                     events: {
                         selection(event) {
+                            if (event.xAxis) {
+                                var minValue: number = event.xAxis[0].min;
+                                var maxValue: number = event.xAxis[0].max;
+                                that._chart.characteristicUpdater(minValue, maxValue);
+                            }
                         }
                     }
                 },
@@ -164,42 +190,6 @@ module Dsp {
         }
     }
 
-    class Characteristics {
-        private _maxValue: number;
-        private _minValue: number;
-        private _peakFactor: number;
-        private _peekToPeek: number;
-        private _standardDeviation: number;
-
-        constructor(jsonObject: any) {
-            this._maxValue = jsonObject.MaxValue;
-            this._minValue = jsonObject.MinValue;
-            this._peakFactor = jsonObject.PeakFactor;
-            this._peekToPeek = jsonObject.PeekToPeek;
-            this._standardDeviation = jsonObject.StandardDeviation;
-        }
-
-        get maxValue(): number {
-            return this._maxValue;
-        }
-
-        get minValue(): number {
-            return this._minValue;
-        }
-
-        get peakFactor(): number {
-            return this._peakFactor;
-        }
-
-        get peekToPeek(): number {
-            return this._peekToPeek;
-        }
-
-        get standardDeviation(): number {
-            return this._standardDeviation;
-        }
-    }
-
     class SignalMetadata {
         private _totalReceiveTime: number;
         private _dataSize: number;
@@ -216,34 +206,6 @@ module Dsp {
         get dataSize(): number {
             return this._dataSize;
         }
-    }
-
-    class DataPoint {
-        private _frequencyValue: number;
-        private _timeValue: number;
-        private _amplitude: number;
-
-        constructor(frequencyValue: number, timeValue: number, amplitude: number) {
-            this._frequencyValue = frequencyValue;
-            this._timeValue = timeValue;
-            this._amplitude = amplitude;
-        }
-
-        get frequency(): number {
-            return this._frequencyValue;
-        }
-
-        get time(): number {
-            return this._timeValue;
-        }
-
-        get amplitude(): number {
-            return this._amplitude;
-        }
-    }
-
-    interface IDataPointMap {
-        [time: string] : DataPoint;
     }
 
     interface IButton {

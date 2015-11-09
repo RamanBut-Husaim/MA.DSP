@@ -1,9 +1,11 @@
+// <reference path="../typings/spin/spin.d.ts"
 var Dsp;
 (function (Dsp) {
     var DspChartBuilder = (function () {
-        function DspChartBuilder(chartContainerId, processButtonId) {
-            this._chartContainerId = chartContainerId;
+        function DspChartBuilder(chartContainerPrefix, seriesPrefix, processButtonId) {
             this._processButtonId = processButtonId;
+            this._chartContainerPrefix = chartContainerPrefix;
+            this._seriesPrefix = seriesPrefix;
         }
         DspChartBuilder.prototype.createCharts = function (data) {
             console.log("chartBuilder");
@@ -18,14 +20,27 @@ var Dsp;
             var that = this;
             var fileName = $('#' + this._processButtonId).attr("data-file");
             if (fileName) {
+                var spinner = this.spinChart(this.getChartId(1));
                 $.post(url, { fileName: fileName }, function (data) {
-                    that._chart = new Dsp.Chart(_this.getChartId(1), data);
+                    that._chart = new Dsp.Chart(_this.getChartId(1), _this.getSeriesId(1), data);
                     that._chart.draw();
+                    that.removeSpin(spinner);
                 }, 'json');
             }
         };
         DspChartBuilder.prototype.getChartId = function (index) {
-            return 'chartContainer_01';
+            return this._chartContainerPrefix + index.toString();
+        };
+        DspChartBuilder.prototype.getSeriesId = function (index) {
+            return this._seriesPrefix + index.toString();
+        };
+        DspChartBuilder.prototype.spinChart = function (chartId) {
+            var spinner = new Spinner();
+            spinner.spin(document.getElementById(chartId));
+            return spinner;
+        };
+        DspChartBuilder.prototype.removeSpin = function (spinner) {
+            spinner.stop();
         };
         return DspChartBuilder;
     })();

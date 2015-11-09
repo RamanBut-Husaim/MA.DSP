@@ -2,9 +2,10 @@
 var Dsp;
 (function (Dsp) {
     var Chart = (function () {
-        function Chart(containerId, jsonData) {
+        function Chart(containerId, seriesId, jsonData) {
             this._containerId = containerId;
-            this._chartData = new ChartData(jsonData);
+            this._chartData = new ChartData(seriesId, jsonData);
+            this._characteristicCalculator = new Dsp.CharacteristicCalculator(this._chartData.dataPoints);
         }
         Object.defineProperty(Chart.prototype, "containerId", {
             get: function () {
@@ -15,16 +16,27 @@ var Dsp;
         });
         Chart.prototype.draw = function () {
             var that = this;
-            var chartBuilder = new ChartConfigurationBuilder(this._chartData);
+            var chartBuilder = new ChartConfigurationBuilder(this._chartData, this);
             $('#' + this._containerId).highcharts("StockChart", chartBuilder.createConfiguration());
+        };
+        Chart.prototype.characteristicUpdater = function (startPoint, endPoint) {
+            var characteristicResult = this._characteristicCalculator.calculate(startPoint, endPoint);
+            this.setupCharecteristics(characteristicResult);
+        };
+        Chart.prototype.setupCharecteristics = function (characteristicsResult) {
+            this._chartData.characteristics.maxValue = characteristicsResult.maxValue;
+            this._chartData.characteristics.minValue = characteristicsResult.minValue;
+            this._chartData.characteristics.peakFactor = characteristicsResult.peakFactor;
+            this._chartData.characteristics.peekToPeek = characteristicsResult.peekToPeek;
+            this._chartData.characteristics.standardDeviation = characteristicsResult.standardDeviation;
         };
         return Chart;
     })();
     Dsp.Chart = Chart;
     var ChartData = (function () {
-        function ChartData(jsonObject) {
+        function ChartData(seriesId, jsonObject) {
             this._fileName = jsonObject.FileName;
-            this._characteristics = new Characteristics(jsonObject.Characteristics);
+            this._characteristics = new Dsp.Characteristics(seriesId, jsonObject.Characteristics);
             this._signalMetadata = new SignalMetadata(jsonObject.SignalMetadata);
             this._data = new Array();
             this._dataPointMap = {};
@@ -37,7 +49,7 @@ var Dsp;
             var timeStep = 1000;
             var that = this;
             $.each(jsonData.Points, function (index, element) {
-                var point = new DataPoint(frequency, time, element.Y);
+                var point = new Dsp.DataPoint(frequency, time, element.Y);
                 that._data.push(point);
                 that._dataPointMap[time.toString()] = point;
                 frequency += frequencyStep;
@@ -69,6 +81,13 @@ var Dsp;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(ChartData.prototype, "dataPoints", {
+            get: function () {
+                return this._data;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(ChartData.prototype, "dataMap", {
             get: function () {
                 return this._dataPointMap;
@@ -79,8 +98,9 @@ var Dsp;
         return ChartData;
     })();
     var ChartConfigurationBuilder = (function () {
-        function ChartConfigurationBuilder(chartData) {
+        function ChartConfigurationBuilder(chartData, chart) {
             this._chartData = chartData;
+            this._chart = chart;
         }
         ChartConfigurationBuilder.prototype.createConfiguration = function () {
             var that = this;
@@ -90,6 +110,11 @@ var Dsp;
                     zoomType: "x",
                     events: {
                         selection: function (event) {
+                            if (event.xAxis) {
+                                var minValue = event.xAxis[0].min;
+                                var maxValue = event.xAxis[0].max;
+                                that._chart.characteristicUpdater(minValue, maxValue);
+                            }
                         }
                     }
                 },
@@ -150,51 +175,6 @@ var Dsp;
         };
         return ChartConfigurationBuilder;
     })();
-    var Characteristics = (function () {
-        function Characteristics(jsonObject) {
-            this._maxValue = jsonObject.MaxValue;
-            this._minValue = jsonObject.MinValue;
-            this._peakFactor = jsonObject.PeakFactor;
-            this._peekToPeek = jsonObject.PeekToPeek;
-            this._standardDeviation = jsonObject.StandardDeviation;
-        }
-        Object.defineProperty(Characteristics.prototype, "maxValue", {
-            get: function () {
-                return this._maxValue;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Characteristics.prototype, "minValue", {
-            get: function () {
-                return this._minValue;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Characteristics.prototype, "peakFactor", {
-            get: function () {
-                return this._peakFactor;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Characteristics.prototype, "peekToPeek", {
-            get: function () {
-                return this._peekToPeek;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Characteristics.prototype, "standardDeviation", {
-            get: function () {
-                return this._standardDeviation;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        return Characteristics;
-    })();
     var SignalMetadata = (function () {
         function SignalMetadata(jsonData) {
             this._totalReceiveTime = jsonData.TotalReceiveTime;
@@ -215,35 +195,6 @@ var Dsp;
             configurable: true
         });
         return SignalMetadata;
-    })();
-    var DataPoint = (function () {
-        function DataPoint(frequencyValue, timeValue, amplitude) {
-            this._frequencyValue = frequencyValue;
-            this._timeValue = timeValue;
-            this._amplitude = amplitude;
-        }
-        Object.defineProperty(DataPoint.prototype, "frequency", {
-            get: function () {
-                return this._frequencyValue;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(DataPoint.prototype, "time", {
-            get: function () {
-                return this._timeValue;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(DataPoint.prototype, "amplitude", {
-            get: function () {
-                return this._amplitude;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        return DataPoint;
     })();
 })(Dsp || (Dsp = {}));
 //# sourceMappingURL=dsp-chart.js.map
