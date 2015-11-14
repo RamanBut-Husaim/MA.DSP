@@ -1,10 +1,13 @@
 ﻿// <reference path="../typings/highcharts/highstock.d.ts"
+// <reference path="../typings/highcharts/highcharts.d.ts"
 
 module Dsp {
     export class Chart {
         private _containerId: string;
         private _chartData: ChartData;
         private _characteristicCalculator: CharacteristicCalculator;
+        private _chartBuilder: ChartConfigurationBuilder;
+        private _characteristicResult: ICharacteristicResult;
 
         constructor(containerId: string, seriesId: string, jsonData: any) {
             this._containerId = containerId;
@@ -18,21 +21,31 @@ module Dsp {
 
         public draw(): void {
             const that = this;
-            var chartBuilder = new ChartConfigurationBuilder(this._chartData, this);
-            $('#' + this._containerId).highcharts("StockChart", chartBuilder.createConfiguration());
+            this._chartBuilder =  new ChartConfigurationBuilder(this._chartData, this);
+            $('#' + this._containerId).highcharts("StockChart", this._chartBuilder.createConfiguration());
+        }
+
+        public destroy(): void {
+            const that = this;
+            $.each(Highcharts.charts, (index, chart) => {
+                var anyChart: any = chart;
+                if ($(anyChart.renderTo).attr("id") === that._containerId) {
+                    anyChart.destroy();
+                }
+            });
         }
 
         public characteristicUpdater(startPoint: number, endPoint: number): void {
-            var characteristicResult: ICharacteristicResult = this._characteristicCalculator.calculate(startPoint, endPoint);
-            this.setupCharecteristics(characteristicResult);
+            this._characteristicResult = this._characteristicCalculator.calculate(startPoint, endPoint);
+            this.setupCharecteristics();
         }
 
-        private setupCharecteristics(characteristicsResult: ICharacteristicResult): void {
-            this._chartData.characteristics.maxValue = characteristicsResult.maxValue;
-            this._chartData.characteristics.minValue = characteristicsResult.minValue;
-            this._chartData.characteristics.peakFactor = characteristicsResult.peakFactor;
-            this._chartData.characteristics.peekToPeek = characteristicsResult.peekToPeek;
-            this._chartData.characteristics.standardDeviation = characteristicsResult.standardDeviation;
+        private setupCharecteristics(): void {
+            this._chartData.characteristics.maxValue = this._characteristicResult.maxValue;
+            this._chartData.characteristics.minValue = this._characteristicResult.minValue;
+            this._chartData.characteristics.peakFactor = this._characteristicResult.peakFactor;
+            this._chartData.characteristics.peekToPeek = this._characteristicResult.peekToPeek;
+            this._chartData.characteristics.standardDeviation = this._characteristicResult.standardDeviation;
         }
     }
 
@@ -107,16 +120,7 @@ module Dsp {
             var buttons: Array<IButton> = this.generateButtons();
             var result = {
                 chart: {
-                    zoomType: "x",
-                    events: {
-                        selection(event) {
-                            if (event.xAxis) {
-                                var minValue: number = event.xAxis[0].min;
-                                var maxValue: number = event.xAxis[0].max;
-                                that._chart.characteristicUpdater(minValue, maxValue);
-                            }
-                        }
-                    }
+                    zoomType: "x"
                 },
                 rangeSelector: {
                     buttonSpacing: 5,
@@ -136,6 +140,15 @@ module Dsp {
                         );
                     },
                     selected: 3
+                },
+                xAxis: {
+                    events: {
+                        setExtremes(event) {
+                            var minValue: number = event.min;
+                            var maxValue: number = event.max;
+                            that._chart.characteristicUpdater(minValue, maxValue);
+                        }
+                    }
                 },
                 yAxis: {
                     title: {

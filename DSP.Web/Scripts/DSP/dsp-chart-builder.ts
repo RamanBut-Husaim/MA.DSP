@@ -22,10 +22,16 @@ module Dsp {
 
         public subsribeToProcess(): void {
             var url = $('#' + this._processButtonId).attr("data-url");
-            $('#' + this._processButtonId).on('click', () => this.retrieveChartData(url));
+            $('#' + this._processButtonId).on('click', () => {
+                if (this._chart) {
+                    this._chart.destroy();
+                }
+
+                this.retrieveChartData(url);
+            });
         }
 
-        public retrieveChartData(url: string): void {
+        private retrieveChartData(url: string): void {
             const that = this;
             var fileName = $('#' + this._processButtonId).attr("data-file");
             if (fileName) {

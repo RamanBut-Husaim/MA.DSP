@@ -104,7 +104,11 @@
                 maxValue: this._maxValueCharacteristic.calculate(startIndex, endIndex),
                 peekToPeek: this._peekToPeekCharacteristic.calculate(startIndex, endIndex),
                 peakFactor: this._peakFactorCharacteristic.calculate(startIndex, endIndex),
-                standardDeviation: this._standardDeviationCharacteristic.calculate(startIndex, endIndex)
+                standardDeviation: this._standardDeviationCharacteristic.calculate(startIndex, endIndex),
+                window: {
+                    startIndex: startIndex,
+                    size: this.calculateWindowSize(startIndex, endIndex)
+                }
             };
         }
 
@@ -126,6 +130,14 @@
             }
 
             return 0;
+        }
+
+        private calculateWindowSize(startIndex: number, endIndex: number) : number {
+            var numberOfPoints : number = endIndex - startIndex + 1;
+            var twoExpotnent: number = Math.floor(Math.log(numberOfPoints) / Math.LN2);
+            var result = Math.pow(2, twoExpotnent);
+
+            return result;
         }
 
         private binarySearch(key: number) : number {
@@ -150,12 +162,18 @@
         }
     }
 
+    export interface IWindowInfo {
+        startIndex: number;
+        size: number;
+    }
+
     export interface ICharacteristicResult {
         maxValue: number;
         minValue: number;
         peekToPeek: number;
         peakFactor: number;
         standardDeviation: number;
+        window: IWindowInfo;
     }
 
     interface ICharacteristic<T> {

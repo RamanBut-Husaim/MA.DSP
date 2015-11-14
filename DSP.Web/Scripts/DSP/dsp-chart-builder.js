@@ -13,7 +13,12 @@ var Dsp;
         DspChartBuilder.prototype.subsribeToProcess = function () {
             var _this = this;
             var url = $('#' + this._processButtonId).attr("data-url");
-            $('#' + this._processButtonId).on('click', function () { return _this.retrieveChartData(url); });
+            $('#' + this._processButtonId).on('click', function () {
+                if (_this._chart) {
+                    _this._chart.destroy();
+                }
+                _this.retrieveChartData(url);
+            });
         };
         DspChartBuilder.prototype.retrieveChartData = function (url) {
             var _this = this;

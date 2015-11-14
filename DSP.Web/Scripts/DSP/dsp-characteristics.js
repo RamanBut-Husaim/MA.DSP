@@ -96,7 +96,11 @@ var Dsp;
                 maxValue: this._maxValueCharacteristic.calculate(startIndex, endIndex),
                 peekToPeek: this._peekToPeekCharacteristic.calculate(startIndex, endIndex),
                 peakFactor: this._peakFactorCharacteristic.calculate(startIndex, endIndex),
-                standardDeviation: this._standardDeviationCharacteristic.calculate(startIndex, endIndex)
+                standardDeviation: this._standardDeviationCharacteristic.calculate(startIndex, endIndex),
+                window: {
+                    startIndex: startIndex,
+                    size: this.calculateWindowSize(startIndex, endIndex)
+                }
             };
         };
         CharacteristicCalculator.prototype.searchNextToMin = function (key) {
@@ -114,6 +118,12 @@ var Dsp;
                 }
             }
             return 0;
+        };
+        CharacteristicCalculator.prototype.calculateWindowSize = function (startIndex, endIndex) {
+            var numberOfPoints = endIndex - startIndex + 1;
+            var twoExpotnent = Math.floor(Math.log(numberOfPoints) / Math.LN2);
+            var result = Math.pow(2, twoExpotnent);
+            return result;
         };
         CharacteristicCalculator.prototype.binarySearch = function (key) {
             var lo = 0, hi = this._dataPoints.length - 1, mid, element;

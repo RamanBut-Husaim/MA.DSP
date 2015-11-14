@@ -1,4 +1,5 @@
 // <reference path="../typings/highcharts/highstock.d.ts"
+// <reference path="../typings/highcharts/highcharts.d.ts"
 var Dsp;
 (function (Dsp) {
     var Chart = (function () {
@@ -16,19 +17,28 @@ var Dsp;
         });
         Chart.prototype.draw = function () {
             var that = this;
-            var chartBuilder = new ChartConfigurationBuilder(this._chartData, this);
-            $('#' + this._containerId).highcharts("StockChart", chartBuilder.createConfiguration());
+            this._chartBuilder = new ChartConfigurationBuilder(this._chartData, this);
+            $('#' + this._containerId).highcharts("StockChart", this._chartBuilder.createConfiguration());
+        };
+        Chart.prototype.destroy = function () {
+            var that = this;
+            $.each(Highcharts.charts, function (index, chart) {
+                var anyChart = chart;
+                if ($(anyChart.renderTo).attr("id") === that._containerId) {
+                    anyChart.destroy();
+                }
+            });
         };
         Chart.prototype.characteristicUpdater = function (startPoint, endPoint) {
-            var characteristicResult = this._characteristicCalculator.calculate(startPoint, endPoint);
-            this.setupCharecteristics(characteristicResult);
+            this._characteristicResult = this._characteristicCalculator.calculate(startPoint, endPoint);
+            this.setupCharecteristics();
         };
-        Chart.prototype.setupCharecteristics = function (characteristicsResult) {
-            this._chartData.characteristics.maxValue = characteristicsResult.maxValue;
-            this._chartData.characteristics.minValue = characteristicsResult.minValue;
-            this._chartData.characteristics.peakFactor = characteristicsResult.peakFactor;
-            this._chartData.characteristics.peekToPeek = characteristicsResult.peekToPeek;
-            this._chartData.characteristics.standardDeviation = characteristicsResult.standardDeviation;
+        Chart.prototype.setupCharecteristics = function () {
+            this._chartData.characteristics.maxValue = this._characteristicResult.maxValue;
+            this._chartData.characteristics.minValue = this._characteristicResult.minValue;
+            this._chartData.characteristics.peakFactor = this._characteristicResult.peakFactor;
+            this._chartData.characteristics.peekToPeek = this._characteristicResult.peekToPeek;
+            this._chartData.characteristics.standardDeviation = this._characteristicResult.standardDeviation;
         };
         return Chart;
     })();
@@ -107,16 +117,7 @@ var Dsp;
             var buttons = this.generateButtons();
             var result = {
                 chart: {
-                    zoomType: "x",
-                    events: {
-                        selection: function (event) {
-                            if (event.xAxis) {
-                                var minValue = event.xAxis[0].min;
-                                var maxValue = event.xAxis[0].max;
-                                that._chart.characteristicUpdater(minValue, maxValue);
-                            }
-                        }
-                    }
+                    zoomType: "x"
                 },
                 rangeSelector: {
                     buttonSpacing: 5,
@@ -128,6 +129,15 @@ var Dsp;
                         return Date.UTC(1970, 0, 1, parseInt(values[0], 10), parseInt(values[1], 10), parseInt(values[2], 10), parseInt(values[3], 10));
                     },
                     selected: 3
+                },
+                xAxis: {
+                    events: {
+                        setExtremes: function (event) {
+                            var minValue = event.min;
+                            var maxValue = event.max;
+                            that._chart.characteristicUpdater(minValue, maxValue);
+                        }
+                    }
                 },
                 yAxis: {
                     title: {
