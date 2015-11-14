@@ -6,7 +6,7 @@
         sampleRate: number;
     }
 
-    export class SpectrumChart {
+    export class SpectrumChart extends ChartBase {
         private _containerId: string;
         private _sampleRate: number;
         private _pointNumber: number;
@@ -14,7 +14,12 @@
         private _dataProvider: SpectrumDataProvider;
         private _chartConfigurationBuilder: SpectrumChartConfiguraitonBuilder;
 
+        public get containerId(): string {
+            return this._containerId;
+        }
+
         constructor(chartData: SpectrumChartData) {
+            super();
             this._containerId = chartData.containerId;
             this._sampleRate = chartData.sampleRate;
             this._pointNumber = chartData.points.length;
@@ -26,21 +31,9 @@
         public draw(): void {
             $('#' + this._containerId).highcharts(this._chartConfigurationBuilder.createConfiguration());
         }
-
-        public destroy(): void {
-            const that = this;
-            $.each(Highcharts.charts, (index, chart) => {
-                var anyChart: any = chart;
-                if ($(anyChart.renderTo).attr("id") === that._containerId) {
-                    anyChart.destroy();
-                    Highcharts.charts.splice(index, 1);
-                    return false;
-                }
-            });
-        }
     }
 
-    class SpectrumDataProvider {
+    class SpectrumDataProvider extends ChartDataProviderBase {
         private _fftBuilder: FFTBuilder;
         private _points: Array<number>;
         private _sampleRate: number;
@@ -48,6 +41,7 @@
         private _dataPoints: Array<DataPoint>;
 
         constructor(points: Array<number>, sampleRate: number) {
+            super();
             this._points = points;
             this._sampleRate = sampleRate;
             this._fftBuilder = new FFTBuilder();
@@ -72,26 +66,23 @@
             return this._dataPoints;
         }
 
-        public get points(): Array<Array<number>> {
-            return this._dataPoints.map((point) => {
-                var pointValues = new Array<number>();
-                pointValues.push(point.xValue, point.amplitude);
-                return pointValues;
-            });
-        }
-
-        public get pointMap(): IDataPointMap {
+        public get dataMap(): IDataPointMap {
             return this._dataPointMap;
         }
     }
 
-    class SpectrumChartConfiguraitonBuilder {
+    class SpectrumChartConfiguraitonBuilder extends ChartConfigurationBuilderBase {
         private _chart: SpectrumChart;
         private _dataProvider: SpectrumDataProvider;
 
         constructor(chart: SpectrumChart, dataProvider: SpectrumDataProvider) {
+            super();
             this._chart = chart;
             this._dataProvider = dataProvider;
+        }
+
+        public get chartDataProvider(): ChartDataProviderBase {
+            return this._dataProvider;
         }
 
         public createConfiguration(): HighchartsOptions {
@@ -127,21 +118,6 @@
             };
 
             return result;
-        }
-
-        private formatPoint(point: any): string {
-            var resultFormat = '<span style="color:' + point.color + '">\u25CF</span>'
-                + point.series.name;
-
-            var dataPoint = this._dataProvider.pointMap[point.x.toString()];
-
-            if (dataPoint) {
-                resultFormat += ': <b>(' + dataPoint.frequency.toString() + ';' + point.y.toString() + ')</b><br/>';
-            } else {
-                resultFormat += ': <b>' + point.y.toString() + '</b><br/>';
-            }
-
-            return resultFormat;
         }
     }
 }

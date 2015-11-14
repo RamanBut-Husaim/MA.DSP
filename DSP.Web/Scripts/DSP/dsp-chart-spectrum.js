@@ -1,3 +1,8 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var Dsp;
 (function (Dsp) {
     var SpectrumChartData = (function () {
@@ -6,8 +11,10 @@ var Dsp;
         return SpectrumChartData;
     })();
     Dsp.SpectrumChartData = SpectrumChartData;
-    var SpectrumChart = (function () {
+    var SpectrumChart = (function (_super) {
+        __extends(SpectrumChart, _super);
         function SpectrumChart(chartData) {
+            _super.call(this);
             this._containerId = chartData.containerId;
             this._sampleRate = chartData.sampleRate;
             this._pointNumber = chartData.points.length;
@@ -15,25 +22,23 @@ var Dsp;
             this._dataProvider = new SpectrumDataProvider(this._points, this._sampleRate);
             this._chartConfigurationBuilder = new SpectrumChartConfiguraitonBuilder(this, this._dataProvider);
         }
+        Object.defineProperty(SpectrumChart.prototype, "containerId", {
+            get: function () {
+                return this._containerId;
+            },
+            enumerable: true,
+            configurable: true
+        });
         SpectrumChart.prototype.draw = function () {
             $('#' + this._containerId).highcharts(this._chartConfigurationBuilder.createConfiguration());
         };
-        SpectrumChart.prototype.destroy = function () {
-            var that = this;
-            $.each(Highcharts.charts, function (index, chart) {
-                var anyChart = chart;
-                if ($(anyChart.renderTo).attr("id") === that._containerId) {
-                    anyChart.destroy();
-                    Highcharts.charts.splice(index, 1);
-                    return false;
-                }
-            });
-        };
         return SpectrumChart;
-    })();
+    })(Dsp.ChartBase);
     Dsp.SpectrumChart = SpectrumChart;
-    var SpectrumDataProvider = (function () {
+    var SpectrumDataProvider = (function (_super) {
+        __extends(SpectrumDataProvider, _super);
         function SpectrumDataProvider(points, sampleRate) {
+            _super.call(this);
             this._points = points;
             this._sampleRate = sampleRate;
             this._fftBuilder = new FFTBuilder();
@@ -57,18 +62,7 @@ var Dsp;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(SpectrumDataProvider.prototype, "points", {
-            get: function () {
-                return this._dataPoints.map(function (point) {
-                    var pointValues = new Array();
-                    pointValues.push(point.xValue, point.amplitude);
-                    return pointValues;
-                });
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(SpectrumDataProvider.prototype, "pointMap", {
+        Object.defineProperty(SpectrumDataProvider.prototype, "dataMap", {
             get: function () {
                 return this._dataPointMap;
             },
@@ -76,12 +70,21 @@ var Dsp;
             configurable: true
         });
         return SpectrumDataProvider;
-    })();
-    var SpectrumChartConfiguraitonBuilder = (function () {
+    })(Dsp.ChartDataProviderBase);
+    var SpectrumChartConfiguraitonBuilder = (function (_super) {
+        __extends(SpectrumChartConfiguraitonBuilder, _super);
         function SpectrumChartConfiguraitonBuilder(chart, dataProvider) {
+            _super.call(this);
             this._chart = chart;
             this._dataProvider = dataProvider;
         }
+        Object.defineProperty(SpectrumChartConfiguraitonBuilder.prototype, "chartDataProvider", {
+            get: function () {
+                return this._dataProvider;
+            },
+            enumerable: true,
+            configurable: true
+        });
         SpectrumChartConfiguraitonBuilder.prototype.createConfiguration = function () {
             var that = this;
             var result = {
@@ -114,19 +117,7 @@ var Dsp;
             };
             return result;
         };
-        SpectrumChartConfiguraitonBuilder.prototype.formatPoint = function (point) {
-            var resultFormat = '<span style="color:' + point.color + '">\u25CF</span>'
-                + point.series.name;
-            var dataPoint = this._dataProvider.pointMap[point.x.toString()];
-            if (dataPoint) {
-                resultFormat += ': <b>(' + dataPoint.frequency.toString() + ';' + point.y.toString() + ')</b><br/>';
-            }
-            else {
-                resultFormat += ': <b>' + point.y.toString() + '</b><br/>';
-            }
-            return resultFormat;
-        };
         return SpectrumChartConfiguraitonBuilder;
-    })();
+    })(Dsp.ChartConfigurationBuilderBase);
 })(Dsp || (Dsp = {}));
 //# sourceMappingURL=dsp-chart-spectrum.js.map

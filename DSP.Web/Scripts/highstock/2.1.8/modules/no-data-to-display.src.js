@@ -115,7 +115,7 @@
 	};
 
 	/**
-	 * Show no-data message if there is no data in sight. Otherwise, hide it.
+	 * Show no-data message if there is no points in sight. Otherwise, hide it.
 	 */
 	function handleNoData() {
 		var chart = this;

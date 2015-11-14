@@ -1,9 +1,16 @@
 // <reference path="../typings/highcharts/highstock.d.ts"
 // <reference path="../typings/highcharts/highcharts.d.ts"
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var Dsp;
 (function (Dsp) {
-    var Chart = (function () {
+    var Chart = (function (_super) {
+        __extends(Chart, _super);
         function Chart(containerId, seriesId, jsonData) {
+            _super.call(this);
             this._containerId = containerId;
             this._chartData = new ChartDataProvider(seriesId, jsonData);
             this._characteristicCalculator = new Dsp.CharacteristicCalculator(this._chartData.dataPoints);
@@ -19,17 +26,6 @@ var Dsp;
             var that = this;
             this._chartBuilder = new ChartConfigurationBuilder(this._chartData, this);
             $('#' + this._containerId).highcharts("StockChart", this._chartBuilder.createConfiguration());
-        };
-        Chart.prototype.destroy = function () {
-            var that = this;
-            $.each(Highcharts.charts, function (index, chart) {
-                var anyChart = chart;
-                if ($(anyChart.renderTo).attr("id") === that._containerId) {
-                    anyChart.destroy();
-                    Highcharts.charts.splice(index, 1);
-                    return false;
-                }
-            });
         };
         Chart.prototype.characteristicUpdater = function (startPoint, endPoint) {
             this._characteristicResult = this._characteristicCalculator.calculate(startPoint, endPoint);
@@ -63,10 +59,12 @@ var Dsp;
             return points;
         };
         return Chart;
-    })();
+    })(Dsp.ChartBase);
     Dsp.Chart = Chart;
-    var ChartDataProvider = (function () {
+    var ChartDataProvider = (function (_super) {
+        __extends(ChartDataProvider, _super);
         function ChartDataProvider(seriesId, jsonObject) {
+            _super.call(this);
             this._fileName = jsonObject.FileName;
             this._characteristics = new Dsp.Characteristics(seriesId, jsonObject.Characteristics);
             this._signalMetadata = new SignalMetadata(jsonObject.SignalMetadata);
@@ -103,17 +101,6 @@ var Dsp;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(ChartDataProvider.prototype, "data", {
-            get: function () {
-                return this._data.map(function (point) {
-                    var pointValues = new Array();
-                    pointValues.push(point.xValue, point.amplitude);
-                    return pointValues;
-                });
-            },
-            enumerable: true,
-            configurable: true
-        });
         Object.defineProperty(ChartDataProvider.prototype, "dataPoints", {
             get: function () {
                 return this._data;
@@ -136,12 +123,21 @@ var Dsp;
             configurable: true
         });
         return ChartDataProvider;
-    })();
-    var ChartConfigurationBuilder = (function () {
+    })(Dsp.ChartDataProviderBase);
+    var ChartConfigurationBuilder = (function (_super) {
+        __extends(ChartConfigurationBuilder, _super);
         function ChartConfigurationBuilder(chartData, chart) {
+            _super.call(this);
             this._chartData = chartData;
             this._chart = chart;
         }
+        Object.defineProperty(ChartConfigurationBuilder.prototype, "chartDataProvider", {
+            get: function () {
+                return this._chartData;
+            },
+            enumerable: true,
+            configurable: true
+        });
         ChartConfigurationBuilder.prototype.createConfiguration = function () {
             var that = this;
             var buttons = this.generateButtons();
@@ -152,12 +148,7 @@ var Dsp;
                 rangeSelector: {
                     buttonSpacing: 5,
                     buttons: buttons,
-                    inputDateFormat: "%H:%M:%S.%L",
-                    inputEditDateFormat: '%H:%M:%S.%L',
-                    inputDateParser: function (value) {
-                        var values = value.split(/[:\.]/);
-                        return Date.UTC(1970, 0, 1, parseInt(values[0], 10), parseInt(values[1], 10), parseInt(values[2], 10), parseInt(values[3], 10));
-                    },
+                    inputEnabled: false,
                     selected: 3
                 },
                 xAxis: {
@@ -185,36 +176,24 @@ var Dsp;
                 series: [
                     {
                         name: "Signal",
-                        data: that._chartData.data
+                        data: that._chartData.points
                     }
                 ]
             };
             return result;
         };
-        ChartConfigurationBuilder.prototype.formatPoint = function (point) {
-            var resultFormat = '<span style="color:' + point.color + '">\u25CF</span>'
-                + point.series.name;
-            var dataPoint = this._chartData.dataMap[point.x.toString()];
-            if (dataPoint) {
-                resultFormat += ': <b>(' + dataPoint.frequency.toString() + ';' + point.y.toString() + ')</b><br/>';
-            }
-            else {
-                resultFormat += ': <b>' + point.y.toString() + '</b><br/>';
-            }
-            return resultFormat;
-        };
         ChartConfigurationBuilder.prototype.generateButtons = function () {
             var initPointNumber = 64;
             var exp = 6;
             var buttons = new Array();
-            for (var i = initPointNumber; i < this._chartData.data.length; i *= 2) {
+            for (var i = initPointNumber; i < this._chartData.points.length; i *= 2) {
                 buttons.push({ type: "second", count: i, text: "2^" + exp.toString() });
                 exp++;
             }
             return buttons;
         };
         return ChartConfigurationBuilder;
-    })();
+    })(Dsp.ChartConfigurationBuilderBase);
     var SignalMetadata = (function () {
         function SignalMetadata(jsonData) {
             this._totalReceiveTime = jsonData.TotalReceiveTime;
