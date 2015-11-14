@@ -1,9 +1,9 @@
 var Dsp;
 (function (Dsp) {
     var DataPoint = (function () {
-        function DataPoint(frequencyValue, timeValue, amplitude) {
+        function DataPoint(frequencyValue, xValue, amplitude) {
             this._frequencyValue = frequencyValue;
-            this._timeValue = timeValue;
+            this._xValue = xValue;
             this._amplitude = amplitude;
         }
         Object.defineProperty(DataPoint.prototype, "frequency", {
@@ -13,9 +13,9 @@ var Dsp;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(DataPoint.prototype, "time", {
+        Object.defineProperty(DataPoint.prototype, "xValue", {
             get: function () {
-                return this._timeValue;
+                return this._xValue;
             },
             enumerable: true,
             configurable: true

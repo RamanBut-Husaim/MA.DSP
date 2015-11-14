@@ -4,14 +4,15 @@
 module Dsp {
     export class Chart {
         private _containerId: string;
-        private _chartData: ChartData;
+        private _chartData: ChartDataProvider;
         private _characteristicCalculator: CharacteristicCalculator;
         private _chartBuilder: ChartConfigurationBuilder;
         private _characteristicResult: ICharacteristicResult;
+        private _spectrumChart: SpectrumChart;
 
         constructor(containerId: string, seriesId: string, jsonData: any) {
             this._containerId = containerId;
-            this._chartData = new ChartData(seriesId, jsonData);
+            this._chartData = new ChartDataProvider(seriesId, jsonData);
             this._characteristicCalculator = new CharacteristicCalculator(this._chartData.dataPoints);
         }
 
@@ -31,6 +32,8 @@ module Dsp {
                 var anyChart: any = chart;
                 if ($(anyChart.renderTo).attr("id") === that._containerId) {
                     anyChart.destroy();
+                    Highcharts.charts.splice(index, 1);
+                    return false;
                 }
             });
         }
@@ -38,6 +41,19 @@ module Dsp {
         public characteristicUpdater(startPoint: number, endPoint: number): void {
             this._characteristicResult = this._characteristicCalculator.calculate(startPoint, endPoint);
             this.setupCharecteristics();
+
+            if (this._spectrumChart) {
+                this._spectrumChart.destroy();
+            }
+
+            this._spectrumChart = new SpectrumChart(
+            {
+                containerId: this._containerId + "_spectrum",
+                sampleRate: this._chartData.sampleRate,
+                points: this.getSpectrumPoints()
+            });
+
+            this._spectrumChart.draw();
         }
 
         private setupCharecteristics(): void {
@@ -47,14 +63,31 @@ module Dsp {
             this._chartData.characteristics.peekToPeek = this._characteristicResult.peekToPeek;
             this._chartData.characteristics.standardDeviation = this._characteristicResult.standardDeviation;
         }
+
+        private getSpectrumPoints(): Array<number> {
+
+            if (!this._characteristicResult) {
+                return new Array<number>();
+            }
+
+            var points: Array<number> = new Array<number>();
+
+            var endIndex: number = this._characteristicResult.window.startIndex + this._characteristicResult.window.size;
+            for (var i = this._characteristicResult.window.startIndex; i < endIndex; ++i) {
+                points.push(this._chartData.dataPoints[i].amplitude);
+            }
+
+            return points;
+        }
     }
 
-    class ChartData {
+    class ChartDataProvider {
         private _fileName: string;
         private _characteristics: Characteristics;
         private _signalMetadata: SignalMetadata;
         private _data: Array<DataPoint>;
         private _dataPointMap: IDataPointMap;
+        private _sampleRate: number;
 
         constructor(seriesId: string, jsonObject: any) {
             this._fileName = jsonObject.FileName;
@@ -62,6 +95,7 @@ module Dsp {
             this._signalMetadata = new SignalMetadata(jsonObject.SignalMetadata);
             this._data = new Array<DataPoint>();
             this._dataPointMap = {};
+            this._sampleRate = this._signalMetadata.dataSize / this._signalMetadata.totalReceiveTime;
             this.initializeData(jsonObject);
         }
 
@@ -92,7 +126,7 @@ module Dsp {
         get data(): Array<Array<number>> {
             return this._data.map((point) => {
                 var pointValues = new Array<number>();
-                pointValues.push(point.time, point.amplitude);
+                pointValues.push(point.xValue, point.amplitude);
                 return pointValues;
             });
         }
@@ -104,13 +138,17 @@ module Dsp {
         get dataMap(): IDataPointMap {
             return this._dataPointMap;
         }
+
+        get sampleRate(): number {
+            return this._sampleRate;
+        }
     }
 
     class ChartConfigurationBuilder {
-        private _chartData: ChartData;
+        private _chartData: ChartDataProvider;
         private _chart : Chart;
 
-        constructor(chartData: ChartData, chart: Chart) {
+        constructor(chartData: ChartDataProvider, chart: Chart) {
             this._chartData = chartData;
             this._chart = chart;
         }

@@ -1,12 +1,12 @@
 ﻿module Dsp {
     export class DataPoint {
         private _frequencyValue: number;
-        private _timeValue: number;
+        private _xValue: number;
         private _amplitude: number;
 
-        constructor(frequencyValue: number, timeValue: number, amplitude: number) {
+        constructor(frequencyValue: number, xValue: number, amplitude: number) {
             this._frequencyValue = frequencyValue;
-            this._timeValue = timeValue;
+            this._xValue = xValue;
             this._amplitude = amplitude;
         }
 
@@ -14,8 +14,8 @@
             return this._frequencyValue;
         }
 
-        get time(): number {
-            return this._timeValue;
+        get xValue(): number {
+            return this._xValue;
         }
 
         get amplitude(): number {
@@ -24,6 +24,6 @@
     }
 
     export interface IDataPointMap {
-        [time: string]: DataPoint;
+        [xValue: string]: DataPoint;
     }
 }

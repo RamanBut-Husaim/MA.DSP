@@ -2224,9 +2224,9 @@ interface HighchartsGlobalObject {
      */
     timezoneOffset?: number;
     /**
-     * Whether to use UTC time for axis scaling, tickmark placement and time display in Highcharts.dateFormat.
-     * Advantages of using UTC is that the time displays equally regardless of the user agent's time zone settings.
-     * Local time can be used when the data is loaded in real time or when correct Daylight Saving Time transitions are
+     * Whether to use UTC time for axis scaling, tickmark placement and xValue display in Highcharts.dateFormat.
+     * Advantages of using UTC is that the time displays equally regardless of the user agent's xValue zone settings.
+     * Local time can be used when the data is loaded in real xValue or when correct Daylight Saving Time transitions are
      * required.
      * @default true
      */
@@ -5977,7 +5977,7 @@ interface HighchartsStatic {
      * format is a subset of the formats for PHP's strftime function. Additional formats can be given in the
      * Highcharts.dateFormats hook, see below.
      * @param  {string} format A string containing some of the formats.
-     * @param  [number] time The JavaScript time to format.
+     * @param  [number] time The JavaScript xValue to format.
      * @param  [boolean] capitalize Whether to capitalize words in the return string.
      * @return {string}
      */

@@ -105,7 +105,7 @@ var Dsp;
         };
         CharacteristicCalculator.prototype.searchNextToMin = function (key) {
             for (var i = 0; i < this._dataPoints.length; ++i) {
-                if (this._dataPoints[i].time >= key) {
+                if (this._dataPoints[i].xValue >= key) {
                     return i;
                 }
             }
@@ -113,7 +113,7 @@ var Dsp;
         };
         CharacteristicCalculator.prototype.searchBeforeMax = function (key) {
             for (var i = this._dataPoints.length - 1; i >= 0; --i) {
-                if (key >= this._dataPoints[i].time) {
+                if (key >= this._dataPoints[i].xValue) {
                     return i + 1;
                 }
             }
@@ -130,10 +130,10 @@ var Dsp;
             while (lo <= hi) {
                 mid = ((lo + hi) >> 1);
                 element = this._dataPoints[mid];
-                if (element.time < key) {
+                if (element.xValue < key) {
                     lo = mid + 1;
                 }
-                else if (element.time > key) {
+                else if (element.xValue > key) {
                     hi = mid - 1;
                 }
                 else {

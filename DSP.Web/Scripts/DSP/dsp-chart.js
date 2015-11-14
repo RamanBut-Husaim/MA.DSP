@@ -5,7 +5,7 @@ var Dsp;
     var Chart = (function () {
         function Chart(containerId, seriesId, jsonData) {
             this._containerId = containerId;
-            this._chartData = new ChartData(seriesId, jsonData);
+            this._chartData = new ChartDataProvider(seriesId, jsonData);
             this._characteristicCalculator = new Dsp.CharacteristicCalculator(this._chartData.dataPoints);
         }
         Object.defineProperty(Chart.prototype, "containerId", {
@@ -26,12 +26,23 @@ var Dsp;
                 var anyChart = chart;
                 if ($(anyChart.renderTo).attr("id") === that._containerId) {
                     anyChart.destroy();
+                    Highcharts.charts.splice(index, 1);
+                    return false;
                 }
             });
         };
         Chart.prototype.characteristicUpdater = function (startPoint, endPoint) {
             this._characteristicResult = this._characteristicCalculator.calculate(startPoint, endPoint);
             this.setupCharecteristics();
+            if (this._spectrumChart) {
+                this._spectrumChart.destroy();
+            }
+            this._spectrumChart = new Dsp.SpectrumChart({
+                containerId: this._containerId + "_spectrum",
+                sampleRate: this._chartData.sampleRate,
+                points: this.getSpectrumPoints()
+            });
+            this._spectrumChart.draw();
         };
         Chart.prototype.setupCharecteristics = function () {
             this._chartData.characteristics.maxValue = this._characteristicResult.maxValue;
@@ -40,19 +51,31 @@ var Dsp;
             this._chartData.characteristics.peekToPeek = this._characteristicResult.peekToPeek;
             this._chartData.characteristics.standardDeviation = this._characteristicResult.standardDeviation;
         };
+        Chart.prototype.getSpectrumPoints = function () {
+            if (!this._characteristicResult) {
+                return new Array();
+            }
+            var points = new Array();
+            var endIndex = this._characteristicResult.window.startIndex + this._characteristicResult.window.size;
+            for (var i = this._characteristicResult.window.startIndex; i < endIndex; ++i) {
+                points.push(this._chartData.dataPoints[i].amplitude);
+            }
+            return points;
+        };
         return Chart;
     })();
     Dsp.Chart = Chart;
-    var ChartData = (function () {
-        function ChartData(seriesId, jsonObject) {
+    var ChartDataProvider = (function () {
+        function ChartDataProvider(seriesId, jsonObject) {
             this._fileName = jsonObject.FileName;
             this._characteristics = new Dsp.Characteristics(seriesId, jsonObject.Characteristics);
             this._signalMetadata = new SignalMetadata(jsonObject.SignalMetadata);
             this._data = new Array();
             this._dataPointMap = {};
+            this._sampleRate = this._signalMetadata.dataSize / this._signalMetadata.totalReceiveTime;
             this.initializeData(jsonObject);
         }
-        ChartData.prototype.initializeData = function (jsonData) {
+        ChartDataProvider.prototype.initializeData = function (jsonData) {
             var time = (new Date()).getTime();
             var frequency = 0;
             var frequencyStep = this._signalMetadata.totalReceiveTime / this._signalMetadata.dataSize;
@@ -66,46 +89,53 @@ var Dsp;
                 time += timeStep;
             });
         };
-        Object.defineProperty(ChartData.prototype, "fileName", {
+        Object.defineProperty(ChartDataProvider.prototype, "fileName", {
             get: function () {
                 return this._fileName;
             },
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(ChartData.prototype, "characteristics", {
+        Object.defineProperty(ChartDataProvider.prototype, "characteristics", {
             get: function () {
                 return this._characteristics;
             },
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(ChartData.prototype, "data", {
+        Object.defineProperty(ChartDataProvider.prototype, "data", {
             get: function () {
                 return this._data.map(function (point) {
                     var pointValues = new Array();
-                    pointValues.push(point.time, point.amplitude);
+                    pointValues.push(point.xValue, point.amplitude);
                     return pointValues;
                 });
             },
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(ChartData.prototype, "dataPoints", {
+        Object.defineProperty(ChartDataProvider.prototype, "dataPoints", {
             get: function () {
                 return this._data;
             },
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(ChartData.prototype, "dataMap", {
+        Object.defineProperty(ChartDataProvider.prototype, "dataMap", {
             get: function () {
                 return this._dataPointMap;
             },
             enumerable: true,
             configurable: true
         });
-        return ChartData;
+        Object.defineProperty(ChartDataProvider.prototype, "sampleRate", {
+            get: function () {
+                return this._sampleRate;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return ChartDataProvider;
     })();
     var ChartConfigurationBuilder = (function () {
         function ChartConfigurationBuilder(chartData, chart) {

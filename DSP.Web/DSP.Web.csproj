@@ -235,9 +235,11 @@
     <TypeScriptCompile Include="Scripts\DSP\dsp-characteristics.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-chart-builder.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-chart.ts" />
+    <TypeScriptCompile Include="Scripts\DSP\dsp-chart-spectrum.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-data-point.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-file-uploader.ts" />
     <Content Include="Scripts\DSP\dsp.js" />
+    <Content Include="Scripts\DSP\fft-builder.js" />
     <Content Include="Scripts\highstock\2.1.8\adapters\standalone-framework.js" />
     <Content Include="Scripts\highstock\2.1.8\adapters\standalone-framework.src.js" />
     <Content Include="Scripts\highstock\2.1.8\highcharts-3d.js" />
@@ -318,6 +320,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <TypeScriptCompile Include="Scripts\typings\dsp\fft-builder.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\spin\spin.d.ts" />
   </ItemGroup>
   <ItemGroup>
