@@ -39,7 +39,8 @@ module Dsp {
             {
                 containerId: this._containerId + "_spectrum",
                 sampleRate: this._chartData.sampleRate,
-                points: this.getSpectrumPoints()
+                points: this.getSpectrumPoints(),
+                frequencyDefinition: this._chartData.frequencyDefinition
             });
 
             this._spectrumChart.draw();
@@ -124,6 +125,10 @@ module Dsp {
         get sampleRate(): number {
             return this._sampleRate;
         }
+
+        get frequencyDefinition(): number {
+            return this._signalMetadata.frequencyDefinition;
+        }
     }
 
     class ChartConfigurationBuilder extends ChartConfigurationBuilderBase {
@@ -203,10 +208,12 @@ module Dsp {
     class SignalMetadata {
         private _totalReceiveTime: number;
         private _dataSize: number;
+        private _frequencyDefinition: number;
 
         constructor(jsonData: any) {
             this._totalReceiveTime = jsonData.TotalReceiveTime;
             this._dataSize = jsonData.DataSize;
+            this._frequencyDefinition = jsonData.FrequencyDefinition;
         }
 
         get totalReceiveTime(): number {
@@ -215,6 +222,10 @@ module Dsp {
 
         get dataSize(): number {
             return this._dataSize;
+        }
+
+        get frequencyDefinition(): number {
+            return this._frequencyDefinition;
         }
     }
 

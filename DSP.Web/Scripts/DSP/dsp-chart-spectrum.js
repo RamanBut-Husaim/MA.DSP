@@ -16,10 +16,9 @@ var Dsp;
         function SpectrumChart(chartData) {
             _super.call(this);
             this._containerId = chartData.containerId;
-            this._sampleRate = chartData.sampleRate;
             this._pointNumber = chartData.points.length;
             this._points = chartData.points;
-            this._dataProvider = new SpectrumDataProvider(this._points, this._sampleRate);
+            this._dataProvider = new SpectrumDataProvider(this._points, chartData.sampleRate, chartData.frequencyDefinition);
             this._chartConfigurationBuilder = new SpectrumChartConfiguraitonBuilder(this, this._dataProvider);
         }
         Object.defineProperty(SpectrumChart.prototype, "containerId", {
@@ -37,10 +36,11 @@ var Dsp;
     Dsp.SpectrumChart = SpectrumChart;
     var SpectrumDataProvider = (function (_super) {
         __extends(SpectrumDataProvider, _super);
-        function SpectrumDataProvider(points, sampleRate) {
+        function SpectrumDataProvider(points, sampleRate, frequencyDefinition) {
             _super.call(this);
             this._points = points;
             this._sampleRate = sampleRate;
+            this._frequencyDefinition = frequencyDefinition;
             this._fftBuilder = new FFTBuilder();
             this._dataPointMap = {};
             this.initialize();
@@ -50,7 +50,7 @@ var Dsp;
             fft.forward(this._points);
             this._dataPoints = new Array();
             for (var i = 0; i < fft.spectrum.length; ++i) {
-                var dataPoint = new Dsp.DataPoint(i * 1 / this._sampleRate, i, fft.spectrum[i]);
+                var dataPoint = new Dsp.DataPoint(i * this._frequencyDefinition, i, fft.spectrum[i]);
                 this._dataPoints.push(dataPoint);
                 this._dataPointMap[i.toString()] = dataPoint;
             }
@@ -93,7 +93,7 @@ var Dsp;
                     type: "column"
                 },
                 title: {
-                    test: "Spectrum"
+                    text: "Spectrum"
                 },
                 yAxis: {
                     title: {

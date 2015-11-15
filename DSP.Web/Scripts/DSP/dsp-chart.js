@@ -36,7 +36,8 @@ var Dsp;
             this._spectrumChart = new Dsp.SpectrumChart({
                 containerId: this._containerId + "_spectrum",
                 sampleRate: this._chartData.sampleRate,
-                points: this.getSpectrumPoints()
+                points: this.getSpectrumPoints(),
+                frequencyDefinition: this._chartData.frequencyDefinition
             });
             this._spectrumChart.draw();
         };
@@ -122,6 +123,13 @@ var Dsp;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(ChartDataProvider.prototype, "frequencyDefinition", {
+            get: function () {
+                return this._signalMetadata.frequencyDefinition;
+            },
+            enumerable: true,
+            configurable: true
+        });
         return ChartDataProvider;
     })(Dsp.ChartDataProviderBase);
     var ChartConfigurationBuilder = (function (_super) {
@@ -198,6 +206,7 @@ var Dsp;
         function SignalMetadata(jsonData) {
             this._totalReceiveTime = jsonData.TotalReceiveTime;
             this._dataSize = jsonData.DataSize;
+            this._frequencyDefinition = jsonData.FrequencyDefinition;
         }
         Object.defineProperty(SignalMetadata.prototype, "totalReceiveTime", {
             get: function () {
@@ -209,6 +218,13 @@ var Dsp;
         Object.defineProperty(SignalMetadata.prototype, "dataSize", {
             get: function () {
                 return this._dataSize;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SignalMetadata.prototype, "frequencyDefinition", {
+            get: function () {
+                return this._frequencyDefinition;
             },
             enumerable: true,
             configurable: true

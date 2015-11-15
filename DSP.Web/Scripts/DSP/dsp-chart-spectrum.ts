@@ -4,11 +4,11 @@
         containerId: string;
         points: Array<number>;
         sampleRate: number;
+        frequencyDefinition: number;
     }
 
     export class SpectrumChart extends ChartBase {
         private _containerId: string;
-        private _sampleRate: number;
         private _pointNumber: number;
         private _points: Array<number>;
         private _dataProvider: SpectrumDataProvider;
@@ -21,10 +21,9 @@
         constructor(chartData: SpectrumChartData) {
             super();
             this._containerId = chartData.containerId;
-            this._sampleRate = chartData.sampleRate;
             this._pointNumber = chartData.points.length;
             this._points = chartData.points;
-            this._dataProvider = new SpectrumDataProvider(this._points, this._sampleRate);
+            this._dataProvider = new SpectrumDataProvider(this._points, chartData.sampleRate, chartData.frequencyDefinition);
             this._chartConfigurationBuilder = new SpectrumChartConfiguraitonBuilder(this, this._dataProvider);
         }
 
@@ -37,13 +36,15 @@
         private _fftBuilder: FFTBuilder;
         private _points: Array<number>;
         private _sampleRate: number;
+        private _frequencyDefinition;
         private _dataPointMap: IDataPointMap;
         private _dataPoints: Array<DataPoint>;
 
-        constructor(points: Array<number>, sampleRate: number) {
+        constructor(points: Array<number>, sampleRate: number, frequencyDefinition: number) {
             super();
             this._points = points;
             this._sampleRate = sampleRate;
+            this._frequencyDefinition = frequencyDefinition;
             this._fftBuilder = new FFTBuilder();
             this._dataPointMap = {};
             this.initialize();
@@ -56,7 +57,7 @@
 
             this._dataPoints = new Array<DataPoint>();
             for (var i = 0; i < fft.spectrum.length; ++i) {
-                var dataPoint = new DataPoint(i * 1 / this._sampleRate, i, fft.spectrum[i]);
+                var dataPoint = new DataPoint(i * this._frequencyDefinition, i, fft.spectrum[i]);
                 this._dataPoints.push(dataPoint);
                 this._dataPointMap[i.toString()] = dataPoint;
             }
@@ -94,7 +95,7 @@
                     type: "column"
                 },
                 title: {
-                    test: "Spectrum"
+                    text: "Spectrum"
                 },
                 yAxis: {
                     title: {
