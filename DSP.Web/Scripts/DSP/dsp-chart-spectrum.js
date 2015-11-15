@@ -120,4 +120,3 @@ var Dsp;
         return SpectrumChartConfiguraitonBuilder;
     })(Dsp.ChartConfigurationBuilderBase);
 })(Dsp || (Dsp = {}));
-//# sourceMappingURL=dsp-chart-spectrum.js.map

@@ -205,7 +205,7 @@ module Dsp {
         }
     }
 
-    class SignalMetadata {
+    export class SignalMetadata {
         private _totalReceiveTime: number;
         private _dataSize: number;
         private _frequencyDefinition: number;

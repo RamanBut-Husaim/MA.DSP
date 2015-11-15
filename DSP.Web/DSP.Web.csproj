@@ -235,6 +235,7 @@
     <TypeScriptCompile Include="Scripts\DSP\dsp-characteristics.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-chart-builder.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-chart-core.ts" />
+    <TypeScriptCompile Include="Scripts\DSP\dsp-chart-integral.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-chart.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-chart-spectrum.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-data-point.ts" />

@@ -231,5 +231,5 @@ var Dsp;
         });
         return SignalMetadata;
     })();
+    Dsp.SignalMetadata = SignalMetadata;
 })(Dsp || (Dsp = {}));
-//# sourceMappingURL=dsp-chart.js.map
