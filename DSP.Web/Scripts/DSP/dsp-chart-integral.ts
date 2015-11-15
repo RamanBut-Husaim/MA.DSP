@@ -1,11 +1,22 @@
 ﻿module Dsp {
 
-    export class IntegralChartData {
-        signalMetadata: SignalMetadata;
-        dataPoints: Array<DataPoint>;
+    export class IntegralChartBuilder implements IWindowBasedChartBuilder {
+        create(chartData: WindowChartData): WindowChart {
+            var dataProvider = new ChartIntegralDataProvider(chartData.signalMetadata, chartData.points);
+
+            var chartInfo: ChartInfo = new ChartInfo();
+            chartInfo.title = "Integral";
+            chartInfo.yAxisTitle = "Amplitude";
+            chartInfo.seriesName = "Values";
+            chartInfo.chartType = "line";
+
+            var chartConfigurationProvider = new WindowChartConfigurationBuilder(chartInfo, dataProvider);
+
+            return new WindowChart(chartData, chartConfigurationProvider);
+        }
     }
 
-    export class ChartIntegralDataProvider extends ChartDataProviderBase {
+    class ChartIntegralDataProvider extends ChartDataProviderBase {
         private _signalMetadata: SignalMetadata;
         private _dataPoints: Array<DataPoint>;
         private _integrationProcessor: IntegrationProcessor;
@@ -28,12 +39,12 @@
         }
 
         private processPoints(points: Array<DataPoint>): void {
-            var resultPoints: Array<DataPoint> = new Array<DataPoint>();
+            this._dataPoints = new Array<DataPoint>();
             for (var i = 0; i < points.length; ++i) {
                 var point: DataPoint = points[i];
                 var amplitude: number = this._integrationProcessor.calcualteValueForPoint(point);
                 var dataPoint = new DataPoint(point.frequency, point.frequency, amplitude);
-                resultPoints.push(dataPoint);
+                this._dataPoints.push(dataPoint);
                 this._dataMap[dataPoint.xValue.toString()] = dataPoint;
             }
         }

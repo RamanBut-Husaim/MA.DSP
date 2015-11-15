@@ -19,6 +19,7 @@ namespace DSP.Web
                 "~/Scripts/DSP/dsp-window-chart.js",
                 "~/Scripts/DSP/dsp-chart.js",
                 "~/Scripts/DSP/dsp-chart-spectrum.js",
+                "~/Scripts/DSP/dsp-chart-integral.js",
                 "~/Scripts/DSP/dsp-characteristics.js",
                 "~/Scripts/DSP/dsp-data-point.js",
                 "~/Scripts/DSP/fft-builder.js"));

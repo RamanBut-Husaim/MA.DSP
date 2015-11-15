@@ -56,7 +56,7 @@ var Dsp;
             var result = {
                 chart: {
                     zoomType: "x",
-                    type: "column"
+                    type: that._chartInfo.chartType
                 },
                 title: {
                     text: that._chartInfo.title

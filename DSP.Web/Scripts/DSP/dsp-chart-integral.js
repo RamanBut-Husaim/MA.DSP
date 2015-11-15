@@ -5,12 +5,22 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var Dsp;
 (function (Dsp) {
-    var IntegralChartData = (function () {
-        function IntegralChartData() {
+    var IntegralChartBuilder = (function () {
+        function IntegralChartBuilder() {
         }
-        return IntegralChartData;
+        IntegralChartBuilder.prototype.create = function (chartData) {
+            var dataProvider = new ChartIntegralDataProvider(chartData.signalMetadata, chartData.points);
+            var chartInfo = new Dsp.ChartInfo();
+            chartInfo.title = "Integral";
+            chartInfo.yAxisTitle = "Amplitude";
+            chartInfo.seriesName = "Values";
+            chartInfo.chartType = "line";
+            var chartConfigurationProvider = new Dsp.WindowChartConfigurationBuilder(chartInfo, dataProvider);
+            return new Dsp.WindowChart(chartData, chartConfigurationProvider);
+        };
+        return IntegralChartBuilder;
     })();
-    Dsp.IntegralChartData = IntegralChartData;
+    Dsp.IntegralChartBuilder = IntegralChartBuilder;
     var ChartIntegralDataProvider = (function (_super) {
         __extends(ChartIntegralDataProvider, _super);
         function ChartIntegralDataProvider(signalMetadata, points) {
@@ -35,18 +45,17 @@ var Dsp;
             configurable: true
         });
         ChartIntegralDataProvider.prototype.processPoints = function (points) {
-            var resultPoints = new Array();
+            this._dataPoints = new Array();
             for (var i = 0; i < points.length; ++i) {
                 var point = points[i];
                 var amplitude = this._integrationProcessor.calcualteValueForPoint(point);
                 var dataPoint = new Dsp.DataPoint(point.frequency, point.frequency, amplitude);
-                resultPoints.push(dataPoint);
+                this._dataPoints.push(dataPoint);
                 this._dataMap[dataPoint.xValue.toString()] = dataPoint;
             }
         };
         return ChartIntegralDataProvider;
     })(Dsp.ChartDataProviderBase);
-    Dsp.ChartIntegralDataProvider = ChartIntegralDataProvider;
     var HarmonicInfo = (function () {
         function HarmonicInfo() {
         }

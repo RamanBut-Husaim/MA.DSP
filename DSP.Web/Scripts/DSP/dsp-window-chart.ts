@@ -29,6 +29,7 @@
         title: string;
         yAxisTitle: string;
         seriesName: string;
+        chartType: string;
     }
 
     export class WindowChartConfigurationBuilder extends ChartConfigurationBuilderBase {
@@ -51,7 +52,7 @@
             var result = {
                 chart: {
                     zoomType: "x",
-                    type: "column"
+                    type: that._chartInfo.chartType
                 },
                 title: {
                     text: that._chartInfo.title

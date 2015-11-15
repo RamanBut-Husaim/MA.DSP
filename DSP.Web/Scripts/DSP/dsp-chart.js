@@ -7,12 +7,14 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var Dsp;
 (function (Dsp) {
+    // all this stuff should be refactored. Became a mess.
     var Chart = (function (_super) {
         __extends(Chart, _super);
         function Chart(containerId, seriesId, jsonData) {
             _super.call(this);
             this._containerId = containerId;
             this._spectrumChartBuilder = new Dsp.SpectrumChartBuilder();
+            this._integralChartBuilder = new Dsp.IntegralChartBuilder();
             this._chartData = new ChartDataProvider(seriesId, jsonData);
             this._characteristicCalculator = new Dsp.CharacteristicCalculator(this._chartData.dataPoints);
         }
@@ -31,15 +33,20 @@ var Dsp;
         Chart.prototype.characteristicUpdater = function (startPoint, endPoint) {
             this._characteristicResult = this._characteristicCalculator.calculate(startPoint, endPoint);
             this.setupCharecteristics();
-            if (this._spectrumChart) {
-                this._spectrumChart.destroy();
-            }
+            this.cleanUpCharts();
+            var windowPoints = this.getWindowsPoints();
             this._spectrumChart = this._spectrumChartBuilder.create({
                 containerId: this._containerId + "_spectrum",
-                points: this.getSpectrumPoints(),
+                points: windowPoints,
+                signalMetadata: this._chartData.signalMetadata
+            });
+            this._integralChart = this._integralChartBuilder.create({
+                containerId: this._containerId + "_integral",
+                points: windowPoints,
                 signalMetadata: this._chartData.signalMetadata
             });
             this._spectrumChart.draw();
+            this._integralChart.draw();
         };
         Chart.prototype.setupCharecteristics = function () {
             this._chartData.characteristics.maxValue = this._characteristicResult.maxValue;
@@ -48,7 +55,7 @@ var Dsp;
             this._chartData.characteristics.peekToPeek = this._characteristicResult.peekToPeek;
             this._chartData.characteristics.standardDeviation = this._characteristicResult.standardDeviation;
         };
-        Chart.prototype.getSpectrumPoints = function () {
+        Chart.prototype.getWindowsPoints = function () {
             if (!this._characteristicResult) {
                 return new Array();
             }
@@ -58,6 +65,22 @@ var Dsp;
                 points.push(this._chartData.dataPoints[i]);
             }
             return points;
+        };
+        Chart.prototype.cleanUpCharts = function () {
+            if (this._spectrumChart) {
+                this._spectrumChart.destroy();
+            }
+            if (this._integralChart) {
+                this._integralChart.destroy();
+            }
+            var validCharts = new Array();
+            $.each(Highcharts.charts, function (index, chart) {
+                if (chart != undefined) {
+                    validCharts.push(chart);
+                }
+            });
+            Highcharts.charts.length = 0;
+            validCharts.forEach(function (chart) { return Highcharts.charts.push(chart); });
         };
         return Chart;
     })(Dsp.ChartBase);

@@ -2,19 +2,24 @@
 // <reference path="../typings/highcharts/highcharts.d.ts"
 
 module Dsp {
+    // all this stuff should be refactored. Became a mess.
+
     export class Chart extends ChartBase {
         private _containerId: string;
         private _chartData: ChartDataProvider;
         private _characteristicCalculator: CharacteristicCalculator;
         private _chartBuilder: ChartConfigurationBuilder;
         private _spectrumChartBuilder: SpectrumChartBuilder;
+        private _integralChartBuilder: IntegralChartBuilder;
         private _characteristicResult: ICharacteristicResult;
         private _spectrumChart: WindowChart;
+        private _integralChart: WindowChart;
 
         constructor(containerId: string, seriesId: string, jsonData: any) {
             super();
             this._containerId = containerId;
             this._spectrumChartBuilder = new SpectrumChartBuilder();
+            this._integralChartBuilder = new IntegralChartBuilder();
             this._chartData = new ChartDataProvider(seriesId, jsonData);
             this._characteristicCalculator = new CharacteristicCalculator(this._chartData.dataPoints);
         }
@@ -33,18 +38,24 @@ module Dsp {
             this._characteristicResult = this._characteristicCalculator.calculate(startPoint, endPoint);
             this.setupCharecteristics();
 
-            if (this._spectrumChart) {
-                this._spectrumChart.destroy();
-            }
+            this.cleanUpCharts();
 
-            this._spectrumChart = this._spectrumChartBuilder.create(
-            {
+            var windowPoints = this.getWindowsPoints();
+
+            this._spectrumChart = this._spectrumChartBuilder.create({
                 containerId: this._containerId + "_spectrum",
-                points: this.getSpectrumPoints(),
+                points: windowPoints,
+                signalMetadata: this._chartData.signalMetadata
+            });
+
+            this._integralChart = this._integralChartBuilder.create({
+                containerId: this._containerId + "_integral",
+                points: windowPoints,
                 signalMetadata: this._chartData.signalMetadata
             });
 
             this._spectrumChart.draw();
+            this._integralChart.draw();
         }
 
         private setupCharecteristics(): void {
@@ -55,7 +66,7 @@ module Dsp {
             this._chartData.characteristics.standardDeviation = this._characteristicResult.standardDeviation;
         }
 
-        private getSpectrumPoints(): Array<DataPoint> {
+        private getWindowsPoints(): Array<DataPoint> {
 
             if (!this._characteristicResult) {
                 return new Array<DataPoint>();
@@ -69,6 +80,27 @@ module Dsp {
             }
 
             return points;
+        }
+
+        private cleanUpCharts() {
+
+            if (this._spectrumChart) {
+                this._spectrumChart.destroy();
+            }
+
+            if (this._integralChart) {
+                this._integralChart.destroy();
+            }
+
+            var validCharts: Array<HighchartsChart> = new Array<HighchartsChart>();
+            $.each(Highcharts.charts, (index, chart) => {
+                if (chart != undefined) {
+                    validCharts.push(chart);
+                }
+            });
+
+            Highcharts.charts.length = 0;
+            validCharts.forEach((chart) => Highcharts.charts.push(chart));
         }
     }
 

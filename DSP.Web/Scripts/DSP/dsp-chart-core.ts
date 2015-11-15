@@ -59,4 +59,8 @@
             return resultFormat;
         }
     }
+
+    export interface IWindowBasedChartBuilder {
+        create(chartData: WindowChartData): WindowChart;
+    }
 }

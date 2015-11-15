@@ -14,6 +14,7 @@ var Dsp;
             chartInfo.seriesName = "Values";
             chartInfo.title = "Spectrum";
             chartInfo.yAxisTitle = "Amplitude";
+            chartInfo.chartType = "column";
             var configurationBuilder = new Dsp.WindowChartConfigurationBuilder(chartInfo, dataProvider);
             return new Dsp.WindowChart(chartData, configurationBuilder);
         };
