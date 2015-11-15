@@ -5,49 +5,34 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var Dsp;
 (function (Dsp) {
-    var SpectrumChartData = (function () {
-        function SpectrumChartData() {
+    var SpectrumChartBuilder = (function () {
+        function SpectrumChartBuilder() {
         }
-        return SpectrumChartData;
-    })();
-    Dsp.SpectrumChartData = SpectrumChartData;
-    var SpectrumChart = (function (_super) {
-        __extends(SpectrumChart, _super);
-        function SpectrumChart(chartData) {
-            _super.call(this);
-            this._containerId = chartData.containerId;
-            this._pointNumber = chartData.points.length;
-            this._points = chartData.points;
-            this._dataProvider = new SpectrumDataProvider(this._points, chartData.sampleRate, chartData.frequencyDefinition);
-            this._chartConfigurationBuilder = new SpectrumChartConfiguraitonBuilder(this, this._dataProvider);
-        }
-        Object.defineProperty(SpectrumChart.prototype, "containerId", {
-            get: function () {
-                return this._containerId;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        SpectrumChart.prototype.draw = function () {
-            $('#' + this._containerId).highcharts(this._chartConfigurationBuilder.createConfiguration());
+        SpectrumChartBuilder.prototype.create = function (chartData) {
+            var dataProvider = new SpectrumDataProvider(chartData.signalMetadata, chartData.points);
+            var chartInfo = new Dsp.ChartInfo();
+            chartInfo.seriesName = "Values";
+            chartInfo.title = "Spectrum";
+            chartInfo.yAxisTitle = "Amplitude";
+            var configurationBuilder = new Dsp.WindowChartConfigurationBuilder(chartInfo, dataProvider);
+            return new Dsp.WindowChart(chartData, configurationBuilder);
         };
-        return SpectrumChart;
-    })(Dsp.ChartBase);
-    Dsp.SpectrumChart = SpectrumChart;
+        return SpectrumChartBuilder;
+    })();
+    Dsp.SpectrumChartBuilder = SpectrumChartBuilder;
     var SpectrumDataProvider = (function (_super) {
         __extends(SpectrumDataProvider, _super);
-        function SpectrumDataProvider(points, sampleRate, frequencyDefinition) {
+        function SpectrumDataProvider(signalMetadata, points) {
             _super.call(this);
-            this._points = points;
-            this._sampleRate = sampleRate;
-            this._frequencyDefinition = frequencyDefinition;
+            this._sampleRate = signalMetadata.dataSize / signalMetadata.totalReceiveTime;
+            this._frequencyDefinition = signalMetadata.frequencyDefinition;
             this._fftBuilder = new FFTBuilder();
             this._dataPointMap = {};
-            this.initialize();
+            this.initialize(points);
         }
-        SpectrumDataProvider.prototype.initialize = function () {
-            var fft = this._fftBuilder.create(this._points.length, this._sampleRate);
-            fft.forward(this._points);
+        SpectrumDataProvider.prototype.initialize = function (points) {
+            var fft = this._fftBuilder.create(points.length, this._sampleRate);
+            fft.forward(points.map(function (p) { return p.amplitude; }));
             this._dataPoints = new Array();
             for (var i = 0; i < fft.spectrum.length; ++i) {
                 var dataPoint = new Dsp.DataPoint(i * this._frequencyDefinition, i, fft.spectrum[i]);
@@ -71,53 +56,5 @@ var Dsp;
         });
         return SpectrumDataProvider;
     })(Dsp.ChartDataProviderBase);
-    var SpectrumChartConfiguraitonBuilder = (function (_super) {
-        __extends(SpectrumChartConfiguraitonBuilder, _super);
-        function SpectrumChartConfiguraitonBuilder(chart, dataProvider) {
-            _super.call(this);
-            this._chart = chart;
-            this._dataProvider = dataProvider;
-        }
-        Object.defineProperty(SpectrumChartConfiguraitonBuilder.prototype, "chartDataProvider", {
-            get: function () {
-                return this._dataProvider;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        SpectrumChartConfiguraitonBuilder.prototype.createConfiguration = function () {
-            var that = this;
-            var result = {
-                chart: {
-                    zoomType: "x",
-                    type: "column"
-                },
-                title: {
-                    text: "Spectrum"
-                },
-                yAxis: {
-                    title: {
-                        text: "Amplitude"
-                    }
-                },
-                tooltip: {
-                    pointFormatter: function () {
-                        return that.formatPoint(this);
-                    }
-                },
-                legend: {
-                    enabled: false
-                },
-                series: [
-                    {
-                        name: "Values",
-                        data: that._dataProvider.points
-                    }
-                ]
-            };
-            return result;
-        };
-        return SpectrumChartConfiguraitonBuilder;
-    })(Dsp.ChartConfigurationBuilderBase);
 })(Dsp || (Dsp = {}));
 //# sourceMappingURL=dsp-chart-spectrum.js.map

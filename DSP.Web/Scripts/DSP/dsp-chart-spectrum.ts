@@ -1,59 +1,39 @@
 ﻿module Dsp {
+    export class SpectrumChartBuilder {
 
-    export class SpectrumChartData {
-        containerId: string;
-        points: Array<number>;
-        sampleRate: number;
-        frequencyDefinition: number;
-    }
+        public create(chartData: WindowChartData) {
+            var dataProvider = new SpectrumDataProvider(chartData.signalMetadata, chartData.points);
 
-    export class SpectrumChart extends ChartBase {
-        private _containerId: string;
-        private _pointNumber: number;
-        private _points: Array<number>;
-        private _dataProvider: SpectrumDataProvider;
-        private _chartConfigurationBuilder: SpectrumChartConfiguraitonBuilder;
+            var chartInfo: ChartInfo = new ChartInfo();
+            chartInfo.seriesName = "Values";
+            chartInfo.title = "Spectrum";
+            chartInfo.yAxisTitle = "Amplitude";
 
-        public get containerId(): string {
-            return this._containerId;
-        }
+            var configurationBuilder = new WindowChartConfigurationBuilder(chartInfo, dataProvider);
 
-        constructor(chartData: SpectrumChartData) {
-            super();
-            this._containerId = chartData.containerId;
-            this._pointNumber = chartData.points.length;
-            this._points = chartData.points;
-            this._dataProvider = new SpectrumDataProvider(this._points, chartData.sampleRate, chartData.frequencyDefinition);
-            this._chartConfigurationBuilder = new SpectrumChartConfiguraitonBuilder(this, this._dataProvider);
-        }
-
-        public draw(): void {
-            $('#' + this._containerId).highcharts(this._chartConfigurationBuilder.createConfiguration());
+            return new WindowChart(chartData, configurationBuilder);
         }
     }
 
     class SpectrumDataProvider extends ChartDataProviderBase {
         private _fftBuilder: FFTBuilder;
-        private _points: Array<number>;
         private _sampleRate: number;
         private _frequencyDefinition;
         private _dataPointMap: IDataPointMap;
         private _dataPoints: Array<DataPoint>;
 
-        constructor(points: Array<number>, sampleRate: number, frequencyDefinition: number) {
+        constructor(signalMetadata: SignalMetadata, points: Array<DataPoint>) {
             super();
-            this._points = points;
-            this._sampleRate = sampleRate;
-            this._frequencyDefinition = frequencyDefinition;
+            this._sampleRate = signalMetadata.dataSize / signalMetadata.totalReceiveTime;
+            this._frequencyDefinition = signalMetadata.frequencyDefinition;
             this._fftBuilder = new FFTBuilder();
             this._dataPointMap = {};
-            this.initialize();
+            this.initialize(points);
         }
 
-
-        private initialize(): void {
-            var fft = this._fftBuilder.create(this._points.length, this._sampleRate);
-            fft.forward(this._points);
+        private initialize(points: Array<DataPoint>): void {
+            var fft = this._fftBuilder.create(points.length, this._sampleRate);
+            fft.forward(points.map(p => p.amplitude));
 
             this._dataPoints = new Array<DataPoint>();
             for (var i = 0; i < fft.spectrum.length; ++i) {
@@ -69,56 +49,6 @@
 
         public get dataMap(): IDataPointMap {
             return this._dataPointMap;
-        }
-    }
-
-    class SpectrumChartConfiguraitonBuilder extends ChartConfigurationBuilderBase {
-        private _chart: SpectrumChart;
-        private _dataProvider: SpectrumDataProvider;
-
-        constructor(chart: SpectrumChart, dataProvider: SpectrumDataProvider) {
-            super();
-            this._chart = chart;
-            this._dataProvider = dataProvider;
-        }
-
-        public get chartDataProvider(): ChartDataProviderBase {
-            return this._dataProvider;
-        }
-
-        public createConfiguration(): HighchartsOptions {
-            const that = this;
-
-            var result = {
-                chart: {
-                    zoomType: "x",
-                    type: "column"
-                },
-                title: {
-                    text: "Spectrum"
-                },
-                yAxis: {
-                    title: {
-                        text: "Amplitude"
-                    }
-                },
-                tooltip: {
-                    pointFormatter() {
-                        return that.formatPoint(this);
-                    }
-                },
-                legend: {
-                    enabled: false
-                },
-                series: [
-                    {
-                        name: "Values",
-                        data: that._dataProvider.points
-                    }
-                ]
-            };
-
-            return result;
         }
     }
 }

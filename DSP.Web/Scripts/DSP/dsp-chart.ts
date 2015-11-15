@@ -7,12 +7,14 @@ module Dsp {
         private _chartData: ChartDataProvider;
         private _characteristicCalculator: CharacteristicCalculator;
         private _chartBuilder: ChartConfigurationBuilder;
+        private _spectrumChartBuilder: SpectrumChartBuilder;
         private _characteristicResult: ICharacteristicResult;
-        private _spectrumChart: SpectrumChart;
+        private _spectrumChart: WindowChart;
 
         constructor(containerId: string, seriesId: string, jsonData: any) {
             super();
             this._containerId = containerId;
+            this._spectrumChartBuilder = new SpectrumChartBuilder();
             this._chartData = new ChartDataProvider(seriesId, jsonData);
             this._characteristicCalculator = new CharacteristicCalculator(this._chartData.dataPoints);
         }
@@ -35,12 +37,11 @@ module Dsp {
                 this._spectrumChart.destroy();
             }
 
-            this._spectrumChart = new SpectrumChart(
+            this._spectrumChart = this._spectrumChartBuilder.create(
             {
                 containerId: this._containerId + "_spectrum",
-                sampleRate: this._chartData.sampleRate,
                 points: this.getSpectrumPoints(),
-                frequencyDefinition: this._chartData.frequencyDefinition
+                signalMetadata: this._chartData.signalMetadata
             });
 
             this._spectrumChart.draw();
@@ -54,17 +55,17 @@ module Dsp {
             this._chartData.characteristics.standardDeviation = this._characteristicResult.standardDeviation;
         }
 
-        private getSpectrumPoints(): Array<number> {
+        private getSpectrumPoints(): Array<DataPoint> {
 
             if (!this._characteristicResult) {
-                return new Array<number>();
+                return new Array<DataPoint>();
             }
 
-            var points: Array<number> = new Array<number>();
+            var points: Array<DataPoint> = new Array<DataPoint>();
 
             var endIndex: number = this._characteristicResult.window.startIndex + this._characteristicResult.window.size;
             for (var i = this._characteristicResult.window.startIndex; i < endIndex; ++i) {
-                points.push(this._chartData.dataPoints[i].amplitude);
+                points.push(this._chartData.dataPoints[i]);
             }
 
             return points;
@@ -122,12 +123,8 @@ module Dsp {
             return this._dataPointMap;
         }
 
-        get sampleRate(): number {
-            return this._sampleRate;
-        }
-
-        get frequencyDefinition(): number {
-            return this._signalMetadata.frequencyDefinition;
+        get signalMetadata(): SignalMetadata {
+            return this._signalMetadata;
         }
     }
 

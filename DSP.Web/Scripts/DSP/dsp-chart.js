@@ -12,6 +12,7 @@ var Dsp;
         function Chart(containerId, seriesId, jsonData) {
             _super.call(this);
             this._containerId = containerId;
+            this._spectrumChartBuilder = new Dsp.SpectrumChartBuilder();
             this._chartData = new ChartDataProvider(seriesId, jsonData);
             this._characteristicCalculator = new Dsp.CharacteristicCalculator(this._chartData.dataPoints);
         }
@@ -33,11 +34,10 @@ var Dsp;
             if (this._spectrumChart) {
                 this._spectrumChart.destroy();
             }
-            this._spectrumChart = new Dsp.SpectrumChart({
+            this._spectrumChart = this._spectrumChartBuilder.create({
                 containerId: this._containerId + "_spectrum",
-                sampleRate: this._chartData.sampleRate,
                 points: this.getSpectrumPoints(),
-                frequencyDefinition: this._chartData.frequencyDefinition
+                signalMetadata: this._chartData.signalMetadata
             });
             this._spectrumChart.draw();
         };
@@ -55,7 +55,7 @@ var Dsp;
             var points = new Array();
             var endIndex = this._characteristicResult.window.startIndex + this._characteristicResult.window.size;
             for (var i = this._characteristicResult.window.startIndex; i < endIndex; ++i) {
-                points.push(this._chartData.dataPoints[i].amplitude);
+                points.push(this._chartData.dataPoints[i]);
             }
             return points;
         };
@@ -116,16 +116,9 @@ var Dsp;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(ChartDataProvider.prototype, "sampleRate", {
+        Object.defineProperty(ChartDataProvider.prototype, "signalMetadata", {
             get: function () {
-                return this._sampleRate;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(ChartDataProvider.prototype, "frequencyDefinition", {
-            get: function () {
-                return this._signalMetadata.frequencyDefinition;
+                return this._signalMetadata;
             },
             enumerable: true,
             configurable: true

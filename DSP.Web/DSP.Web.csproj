@@ -322,6 +322,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <TypeScriptCompile Include="Scripts\DSP\dsp-window-chart.ts" />
     <TypeScriptCompile Include="Scripts\typings\dsp\fft-builder.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\spin\spin.d.ts" />
   </ItemGroup>
