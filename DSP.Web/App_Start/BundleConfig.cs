@@ -14,6 +14,7 @@ namespace DSP.Web
                 "~/Scripts/DSP/dsp.js",
                 "~/Scripts/DSP/dsp-file-uploader.js",
                 "~/Scripts/DSP/dsp-service.js",
+                "~/Scripts/DSP/dsp-chart-manager.js",
                 "~/Scripts/DSP/dsp-chart-builder.js",
                 "~/Scripts/DSP/dsp-chart-core.js",
                 "~/Scripts/DSP/dsp-window-chart.js",

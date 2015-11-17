@@ -50,5 +50,35 @@ var Dsp;
         return ChartConfigurationBuilderBase;
     })();
     Dsp.ChartConfigurationBuilderBase = ChartConfigurationBuilderBase;
+    var SignalMetadata = (function () {
+        function SignalMetadata(jsonData) {
+            this._totalReceiveTime = jsonData.TotalReceiveTime;
+            this._dataSize = jsonData.DataSize;
+            this._frequencyDefinition = jsonData.FrequencyDefinition;
+        }
+        Object.defineProperty(SignalMetadata.prototype, "totalReceiveTime", {
+            get: function () {
+                return this._totalReceiveTime;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SignalMetadata.prototype, "dataSize", {
+            get: function () {
+                return this._dataSize;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(SignalMetadata.prototype, "frequencyDefinition", {
+            get: function () {
+                return this._frequencyDefinition;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return SignalMetadata;
+    })();
+    Dsp.SignalMetadata = SignalMetadata;
 })(Dsp || (Dsp = {}));
 //# sourceMappingURL=dsp-chart-core.js.map

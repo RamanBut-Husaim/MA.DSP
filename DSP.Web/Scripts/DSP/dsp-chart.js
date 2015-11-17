@@ -7,16 +7,19 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var Dsp;
 (function (Dsp) {
-    // all this stuff should be refactored. Became a mess.
+    var ChartData = (function () {
+        function ChartData() {
+        }
+        return ChartData;
+    })();
+    Dsp.ChartData = ChartData;
     var Chart = (function (_super) {
         __extends(Chart, _super);
-        function Chart(containerId, seriesId, jsonData) {
+        function Chart(chartData) {
             _super.call(this);
-            this._containerId = containerId;
-            this._spectrumChartBuilder = new Dsp.SpectrumChartBuilder();
-            this._integralChartBuilder = new Dsp.IntegralChartBuilder();
-            this._integralSpectrumChartBuilder = new Dsp.IntegralSpectrumChartBuilder();
-            this._chartData = new ChartDataProvider(seriesId, jsonData);
+            this._containerId = chartData.containerId;
+            this._chartManager = chartData.chartManager;
+            this._chartData = new ChartDataProvider(chartData);
             this._characteristicCalculator = new Dsp.CharacteristicCalculator(this._chartData.dataPoints);
         }
         Object.defineProperty(Chart.prototype, "containerId", {
@@ -34,26 +37,8 @@ var Dsp;
         Chart.prototype.characteristicUpdater = function (startPoint, endPoint) {
             this._characteristicResult = this._characteristicCalculator.calculate(startPoint, endPoint);
             this.setupCharecteristics();
-            this.cleanUpCharts();
             var windowPoints = this.getWindowsPoints();
-            this._spectrumChart = this._spectrumChartBuilder.create({
-                containerId: this._containerId + "_spectrum",
-                points: windowPoints,
-                signalMetadata: this._chartData.signalMetadata
-            });
-            this._integralChart = this._integralChartBuilder.create({
-                containerId: this._containerId + "_integral",
-                points: windowPoints,
-                signalMetadata: this._chartData.signalMetadata
-            });
-            this._integralSpectrumChart = this._integralSpectrumChartBuilder.create({
-                containerId: this._containerId + "_integral_spectrum",
-                points: this._integralChart.chartConfigurationBuilder.chartDataProvider.dataPoints,
-                signalMetadata: this._chartData.signalMetadata
-            });
-            this._spectrumChart.draw();
-            this._integralChart.draw();
-            this._integralSpectrumChart.draw();
+            this._chartManager.redrawWindowCharts(windowPoints);
         };
         Chart.prototype.setupCharecteristics = function () {
             this._chartData.characteristics.maxValue = this._characteristicResult.maxValue;
@@ -73,47 +58,27 @@ var Dsp;
             }
             return points;
         };
-        Chart.prototype.cleanUpCharts = function () {
-            if (this._spectrumChart) {
-                this._spectrumChart.destroy();
-            }
-            if (this._integralChart) {
-                this._integralChart.destroy();
-            }
-            if (this._integralSpectrumChart) {
-                this._integralSpectrumChart.destroy();
-            }
-            var validCharts = new Array();
-            $.each(Highcharts.charts, function (index, chart) {
-                if (chart != undefined) {
-                    validCharts.push(chart);
-                }
-            });
-            Highcharts.charts.length = 0;
-            validCharts.forEach(function (chart) { return Highcharts.charts.push(chart); });
-        };
         return Chart;
     })(Dsp.ChartBase);
     Dsp.Chart = Chart;
     var ChartDataProvider = (function (_super) {
         __extends(ChartDataProvider, _super);
-        function ChartDataProvider(seriesId, jsonObject) {
+        function ChartDataProvider(chartData) {
             _super.call(this);
-            this._fileName = jsonObject.FileName;
-            this._characteristics = new Dsp.Characteristics(seriesId, jsonObject.Characteristics);
-            this._signalMetadata = new SignalMetadata(jsonObject.SignalMetadata);
+            this._fileName = chartData.fileName;
+            this._characteristics = new Dsp.Characteristics(chartData.seriesId, chartData.characteristics);
+            this._signalMetadata = chartData.signalMetadata;
             this._data = new Array();
             this._dataPointMap = {};
-            this._sampleRate = this._signalMetadata.dataSize / this._signalMetadata.totalReceiveTime;
-            this.initializeData(jsonObject);
+            this.initializeData(chartData.points);
         }
-        ChartDataProvider.prototype.initializeData = function (jsonData) {
+        ChartDataProvider.prototype.initializeData = function (points) {
             var time = (new Date()).getTime();
             var frequency = 0;
             var frequencyStep = this._signalMetadata.totalReceiveTime / this._signalMetadata.dataSize;
             var timeStep = 1000;
             var that = this;
-            $.each(jsonData.Points, function (index, element) {
+            $.each(points, function (index, element) {
                 var point = new Dsp.DataPoint(frequency, time, element.Y);
                 that._data.push(point);
                 that._dataPointMap[time.toString()] = point;
@@ -228,35 +193,5 @@ var Dsp;
         };
         return ChartConfigurationBuilder;
     })(Dsp.ChartConfigurationBuilderBase);
-    var SignalMetadata = (function () {
-        function SignalMetadata(jsonData) {
-            this._totalReceiveTime = jsonData.TotalReceiveTime;
-            this._dataSize = jsonData.DataSize;
-            this._frequencyDefinition = jsonData.FrequencyDefinition;
-        }
-        Object.defineProperty(SignalMetadata.prototype, "totalReceiveTime", {
-            get: function () {
-                return this._totalReceiveTime;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(SignalMetadata.prototype, "dataSize", {
-            get: function () {
-                return this._dataSize;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(SignalMetadata.prototype, "frequencyDefinition", {
-            get: function () {
-                return this._frequencyDefinition;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        return SignalMetadata;
-    })();
-    Dsp.SignalMetadata = SignalMetadata;
 })(Dsp || (Dsp = {}));
 //# sourceMappingURL=dsp-chart.js.map

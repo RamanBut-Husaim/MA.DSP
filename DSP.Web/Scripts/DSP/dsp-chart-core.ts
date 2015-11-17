@@ -59,4 +59,28 @@
             return resultFormat;
         }
     }
+
+    export class SignalMetadata {
+        private _totalReceiveTime: number;
+        private _dataSize: number;
+        private _frequencyDefinition: number;
+
+        constructor(jsonData: any) {
+            this._totalReceiveTime = jsonData.TotalReceiveTime;
+            this._dataSize = jsonData.DataSize;
+            this._frequencyDefinition = jsonData.FrequencyDefinition;
+        }
+
+        get totalReceiveTime(): number {
+            return this._totalReceiveTime;
+        }
+
+        get dataSize(): number {
+            return this._dataSize;
+        }
+
+        get frequencyDefinition(): number {
+            return this._frequencyDefinition;
+        }
+    }
 }

@@ -5,7 +5,7 @@ module Dsp {
         private _chartContainerPrefix: string;
         private _seriesPrefix: string;
         private _processButtonId: string;
-        private _chart: Chart;
+        private _chartManager: ChartManager;
 
         constructor(
             chartContainerPrefix: string,
@@ -23,8 +23,8 @@ module Dsp {
         public subsribeToProcess(): void {
             var url = $('#' + this._processButtonId).attr("data-url");
             $('#' + this._processButtonId).on('click', () => {
-                if (this._chart) {
-                    this._chart.destroy();
+                if (this._chartManager) {
+                    this._chartManager.destroyCharts();
                 }
 
                 this.retrieveChartData(url);
@@ -37,8 +37,8 @@ module Dsp {
             if (fileName) {
                 var spinner = this.spinChart(this.getChartId(1));
                 $.post(url, { fileName: fileName }, (data) => {
-                    that._chart = new Chart(this.getChartId(1), this.getSeriesId(1), data);
-                    that._chart.draw();
+                    that._chartManager = new ChartManager(this.getChartId(1), this.getSeriesId(1), data);
+                    that._chartManager.drawCharts();
                     that.removeSpin(spinner);
                 }, 'json');
             }

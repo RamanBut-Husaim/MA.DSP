@@ -14,8 +14,8 @@ var Dsp;
             var _this = this;
             var url = $('#' + this._processButtonId).attr("data-url");
             $('#' + this._processButtonId).on('click', function () {
-                if (_this._chart) {
-                    _this._chart.destroy();
+                if (_this._chartManager) {
+                    _this._chartManager.destroyCharts();
                 }
                 _this.retrieveChartData(url);
             });
@@ -27,8 +27,8 @@ var Dsp;
             if (fileName) {
                 var spinner = this.spinChart(this.getChartId(1));
                 $.post(url, { fileName: fileName }, function (data) {
-                    that._chart = new Dsp.Chart(_this.getChartId(1), _this.getSeriesId(1), data);
-                    that._chart.draw();
+                    that._chartManager = new Dsp.ChartManager(_this.getChartId(1), _this.getSeriesId(1), data);
+                    that._chartManager.drawCharts();
                     that.removeSpin(spinner);
                 }, 'json');
             }
