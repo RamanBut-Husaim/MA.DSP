@@ -25,6 +25,13 @@ var Dsp;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(WindowChart.prototype, "chartConfigurationBuilder", {
+            get: function () {
+                return this._chartConfigurationBuilder;
+            },
+            enumerable: true,
+            configurable: true
+        });
         WindowChart.prototype.draw = function () {
             $('#' + this._containerId).highcharts(this._chartConfigurationBuilder.createConfiguration());
         };

@@ -15,6 +15,7 @@ var Dsp;
             this._containerId = containerId;
             this._spectrumChartBuilder = new Dsp.SpectrumChartBuilder();
             this._integralChartBuilder = new Dsp.IntegralChartBuilder();
+            this._integralSpectrumChartBuilder = new Dsp.IntegralSpectrumChartBuilder();
             this._chartData = new ChartDataProvider(seriesId, jsonData);
             this._characteristicCalculator = new Dsp.CharacteristicCalculator(this._chartData.dataPoints);
         }
@@ -45,8 +46,14 @@ var Dsp;
                 points: windowPoints,
                 signalMetadata: this._chartData.signalMetadata
             });
+            this._integralSpectrumChart = this._integralSpectrumChartBuilder.create({
+                containerId: this._containerId + "_integral_spectrum",
+                points: this._integralChart.chartConfigurationBuilder.chartDataProvider.dataPoints,
+                signalMetadata: this._chartData.signalMetadata
+            });
             this._spectrumChart.draw();
             this._integralChart.draw();
+            this._integralSpectrumChart.draw();
         };
         Chart.prototype.setupCharecteristics = function () {
             this._chartData.characteristics.maxValue = this._characteristicResult.maxValue;
@@ -72,6 +79,9 @@ var Dsp;
             }
             if (this._integralChart) {
                 this._integralChart.destroy();
+            }
+            if (this._integralSpectrumChart) {
+                this._integralSpectrumChart.destroy();
             }
             var validCharts = new Array();
             $.each(Highcharts.charts, function (index, chart) {

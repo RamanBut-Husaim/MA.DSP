@@ -11,15 +11,19 @@ module Dsp {
         private _chartBuilder: ChartConfigurationBuilder;
         private _spectrumChartBuilder: SpectrumChartBuilder;
         private _integralChartBuilder: IntegralChartBuilder;
+        private _integralSpectrumChartBuilder: IntegralSpectrumChartBuilder;
+
         private _characteristicResult: ICharacteristicResult;
         private _spectrumChart: WindowChart;
         private _integralChart: WindowChart;
+        private _integralSpectrumChart: WindowChart;
 
         constructor(containerId: string, seriesId: string, jsonData: any) {
             super();
             this._containerId = containerId;
             this._spectrumChartBuilder = new SpectrumChartBuilder();
             this._integralChartBuilder = new IntegralChartBuilder();
+            this._integralSpectrumChartBuilder = new IntegralSpectrumChartBuilder();
             this._chartData = new ChartDataProvider(seriesId, jsonData);
             this._characteristicCalculator = new CharacteristicCalculator(this._chartData.dataPoints);
         }
@@ -54,8 +58,15 @@ module Dsp {
                 signalMetadata: this._chartData.signalMetadata
             });
 
+            this._integralSpectrumChart = this._integralSpectrumChartBuilder.create({
+                containerId: this._containerId + "_integral_spectrum",
+                points: this._integralChart.chartConfigurationBuilder.chartDataProvider.dataPoints,
+                signalMetadata: this._chartData.signalMetadata
+            });
+
             this._spectrumChart.draw();
             this._integralChart.draw();
+            this._integralSpectrumChart.draw();
         }
 
         private setupCharecteristics(): void {
@@ -90,6 +101,10 @@ module Dsp {
 
             if (this._integralChart) {
                 this._integralChart.destroy();
+            }
+
+            if (this._integralSpectrumChart) {
+                this._integralSpectrumChart.destroy();
             }
 
             var validCharts: Array<HighchartsChart> = new Array<HighchartsChart>();

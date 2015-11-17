@@ -7,9 +7,8 @@ var Dsp;
             var that = this;
             $.each(Highcharts.charts, function (index, chart) {
                 var anyChart = chart;
-                if ($(anyChart.renderTo).attr("id") === that.containerId) {
+                if (anyChart && $(anyChart.renderTo).attr("id") === that.containerId) {
                     anyChart.destroy();
-                    Highcharts.charts.splice(index, 1);
                     return false;
                 }
             });

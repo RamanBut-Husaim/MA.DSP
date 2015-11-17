@@ -1,5 +1,9 @@
 ﻿module Dsp {
 
+    export interface IWindowBasedChartBuilder {
+        create(chartData: WindowChartData): WindowChart;
+    }
+
     export class WindowChartData {
         containerId: string;
         points: Array<DataPoint>;
@@ -12,6 +16,10 @@
 
         public get containerId(): string {
             return this._containerId;
+        }
+
+        public get chartConfigurationBuilder(): ChartConfigurationBuilderBase {
+            return this._chartConfigurationBuilder;
         }
 
         constructor(chartData: WindowChartData, chartConfigurationBuilder: WindowChartConfigurationBuilder) {
