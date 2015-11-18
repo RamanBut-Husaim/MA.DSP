@@ -13,6 +13,7 @@ var Dsp;
             this._integralChartBuilder = new Dsp.IntegralChartBuilder();
             this._integralSpectrumChartBuilder = new Dsp.IntegralSpectrumChartBuilder();
             this._doubleIntegralChartBuilder = new Dsp.DoubleIntegralChartBuilder();
+            this._doubleIntegralSpectrumChartBuilder = new Dsp.DoubleIntegralSpectrumChartBuilder();
         };
         ChartManager.prototype.createMainChart = function (jsonData) {
             this._mainChart = new Dsp.Chart({
@@ -38,16 +39,24 @@ var Dsp;
             this._integralChart = this.createIntegralChart(points);
             this._integralSpectrumChart = this.createIntegramSpectrumChart(this._integralChart.chartConfigurationBuilder.chartDataProvider.dataPoints);
             this._doubleIntegralChart = this.createDoubleIntegralChart(points);
-            var chartsToDraw = [
-                this._spectrumChart,
-                this._integralChart,
-                this._integralSpectrumChart,
-                this._doubleIntegralChart
-            ];
-            $.each(chartsToDraw, function (index, chart) {
+            this._doubleIntegralSpectrumChart = this.createDoubleIntegralSpectrumChart(this._doubleIntegralChart.chartConfigurationBuilder.chartDataProvider.dataPoints);
+            $.each(this.windowCharts, function (index, chart) {
                 chart.draw();
             });
         };
+        Object.defineProperty(ChartManager.prototype, "windowCharts", {
+            get: function () {
+                return [
+                    this._spectrumChart,
+                    this._integralChart,
+                    this._integralSpectrumChart,
+                    this._doubleIntegralChart,
+                    this._doubleIntegralSpectrumChart
+                ];
+            },
+            enumerable: true,
+            configurable: true
+        });
         ChartManager.prototype.createSpectrumChart = function (points) {
             return this._spectrumChartBuilder.create({
                 containerId: this._containerId + "_spectrum",
@@ -76,14 +85,15 @@ var Dsp;
                 signalMetadata: this._signalMetadata
             });
         };
+        ChartManager.prototype.createDoubleIntegralSpectrumChart = function (points) {
+            return this._doubleIntegralSpectrumChartBuilder.create({
+                containerId: this._containerId + "_double_integral_spectrum",
+                points: points,
+                signalMetadata: this._signalMetadata
+            });
+        };
         ChartManager.prototype.cleanUpCharts = function () {
-            var chartsToDestroy = [
-                this._spectrumChart,
-                this._integralChart,
-                this._integralSpectrumChart,
-                this._doubleIntegralChart
-            ];
-            $.each(chartsToDestroy, function (index, chart) {
+            $.each(this.windowCharts, function (index, chart) {
                 if (chart) {
                     chart.destroy();
                 }
