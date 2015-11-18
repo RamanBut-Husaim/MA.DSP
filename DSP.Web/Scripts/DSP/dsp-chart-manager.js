@@ -12,6 +12,7 @@ var Dsp;
             this._spectrumChartBuilder = new Dsp.SpectrumChartBuilder();
             this._integralChartBuilder = new Dsp.IntegralChartBuilder();
             this._integralSpectrumChartBuilder = new Dsp.IntegralSpectrumChartBuilder();
+            this._doubleIntegralChartBuilder = new Dsp.DoubleIntegralChartBuilder();
         };
         ChartManager.prototype.createMainChart = function (jsonData) {
             this._mainChart = new Dsp.Chart({
@@ -36,10 +37,13 @@ var Dsp;
             this._spectrumChart = this.createSpectrumChart(points);
             this._integralChart = this.createIntegralChart(points);
             this._integralSpectrumChart = this.createIntegramSpectrumChart(this._integralChart.chartConfigurationBuilder.chartDataProvider.dataPoints);
+            this._doubleIntegralChart = this.createDoubleIntegralChart(points);
             var chartsToDraw = [
                 this._spectrumChart,
                 this._integralChart,
-                this._integralSpectrumChart];
+                this._integralSpectrumChart,
+                this._doubleIntegralChart
+            ];
             $.each(chartsToDraw, function (index, chart) {
                 chart.draw();
             });
@@ -65,11 +69,20 @@ var Dsp;
                 signalMetadata: this._signalMetadata
             });
         };
+        ChartManager.prototype.createDoubleIntegralChart = function (points) {
+            return this._doubleIntegralChartBuilder.create({
+                containerId: this._containerId + "_double_integral",
+                points: points,
+                signalMetadata: this._signalMetadata
+            });
+        };
         ChartManager.prototype.cleanUpCharts = function () {
             var chartsToDestroy = [
                 this._spectrumChart,
                 this._integralChart,
-                this._integralSpectrumChart];
+                this._integralSpectrumChart,
+                this._doubleIntegralChart
+            ];
             $.each(chartsToDestroy, function (index, chart) {
                 if (chart) {
                     chart.destroy();

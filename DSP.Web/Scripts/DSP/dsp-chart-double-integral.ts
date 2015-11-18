@@ -1,10 +1,10 @@
 ﻿module Dsp {
-    export class IntegralChartBuilder implements IWindowBasedChartBuilder {
+    export class DoubleIntegralChartBuilder implements IWindowBasedChartBuilder {
         create(chartData: WindowChartData): WindowChart {
-            var dataProvider = new ChartIntegralDataProvider(chartData.signalMetadata, chartData.points);
+            var dataProvider = new ChartDoubleIntegralDataProvider(chartData.signalMetadata, chartData.points);
 
             var chartInfo: ChartInfo = new ChartInfo();
-            chartInfo.title = "Integral";
+            chartInfo.title = "Double Integral";
             chartInfo.yAxisTitle = "Amplitude";
             chartInfo.seriesName = "Values";
             chartInfo.chartType = "line";
@@ -15,7 +15,7 @@
         }
     }
 
-    class ChartIntegralDataProvider extends ChartDataProviderBase {
+    class ChartDoubleIntegralDataProvider extends ChartDataProviderBase {
         private _signalMetadata: SignalMetadata;
         private _dataPoints: Array<DataPoint>;
         private _integrationProcessor: IntegrationProcessor;
@@ -53,8 +53,8 @@
         amplitude: number;
         frequency: number;
         phase: number;
-        velocityPhase: number;
-        vibrationVelocityAmplitude : number;
+        distancePhase: number;
+        vibrationDistanceAmplitude: number;
     }
 
     class IntegrationProcessor {
@@ -78,7 +78,7 @@
             var pointValue: number = 0;
             for (var i = 0; i < this._harmonicInfos.length; ++i) {
                 var harmonicInfo = this._harmonicInfos[i];
-                pointValue += (harmonicInfo.vibrationVelocityAmplitude * Math.cos(2 * Math.PI * harmonicInfo.frequency * point.frequency - harmonicInfo.velocityPhase));
+                pointValue += (harmonicInfo.vibrationDistanceAmplitude * Math.cos(2 * Math.PI * harmonicInfo.frequency * point.frequency - harmonicInfo.distancePhase));
             }
 
             pointValue += this._integrationConstant;
@@ -100,8 +100,8 @@
                 harmonicInfo.amplitude = fft.spectrum[index];
                 harmonicInfo.frequency = that._signalMetadata.frequencyDefinition * index;
                 harmonicInfo.phase = Math.atan2(fft.imag[index], fft.real[index]);
-                harmonicInfo.velocityPhase = harmonicInfo.phase - Math.PI / 2;
-                harmonicInfo.vibrationVelocityAmplitude = fft.spectrum[index] / (2 * Math.PI * harmonicInfo.frequency);
+                harmonicInfo.distancePhase = harmonicInfo.phase - Math.PI;
+                harmonicInfo.vibrationDistanceAmplitude = fft.spectrum[index] / (4 * Math.PI * Math.PI * harmonicInfo.frequency * harmonicInfo.frequency);
                 harmonicInfos.push(harmonicInfo);
             }
 
@@ -111,7 +111,8 @@
         private calculateIntegrationConstant(): number {
             var integrationConstant: number = 0;
             for (var i = 0; i < this._harmonicInfos.length; ++i) {
-                integrationConstant += (this._harmonicInfos[i].vibrationVelocityAmplitude * Math.sin(this._harmonicInfos[i].phase));
+                var velocityPhase = this._harmonicInfos[i].phase - Math.PI / 2;
+                integrationConstant += (this._harmonicInfos[i].vibrationDistanceAmplitude * Math.sin(velocityPhase));
             }
 
             return integrationConstant;

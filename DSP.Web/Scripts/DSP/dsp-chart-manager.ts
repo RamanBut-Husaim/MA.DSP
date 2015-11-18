@@ -6,11 +6,13 @@
         private _spectrumChartBuilder: SpectrumChartBuilder;
         private _integralChartBuilder: IntegralChartBuilder;
         private _integralSpectrumChartBuilder: IntegralSpectrumChartBuilder;
+        private _doubleIntegralChartBuilder: DoubleIntegralChartBuilder;
 
         private _mainChart: Chart;
         private _spectrumChart: WindowChart;
         private _integralChart: WindowChart;
         private _integralSpectrumChart: WindowChart;
+        private _doubleIntegralChart: WindowChart;
 
         private _signalMetadata: SignalMetadata;
 
@@ -26,6 +28,7 @@
             this._spectrumChartBuilder = new SpectrumChartBuilder();
             this._integralChartBuilder = new IntegralChartBuilder();
             this._integralSpectrumChartBuilder = new IntegralSpectrumChartBuilder();
+            this._doubleIntegralChartBuilder = new DoubleIntegralChartBuilder();
         }
 
         private createMainChart(jsonData: any): void {
@@ -55,11 +58,14 @@
             this._spectrumChart = this.createSpectrumChart(points);
             this._integralChart = this.createIntegralChart(points);
             this._integralSpectrumChart = this.createIntegramSpectrumChart(this._integralChart.chartConfigurationBuilder.chartDataProvider.dataPoints);
+            this._doubleIntegralChart = this.createDoubleIntegralChart(points);
 
             var chartsToDraw: WindowChart[] = [
                 this._spectrumChart,
                 this._integralChart,
-                this._integralSpectrumChart];
+                this._integralSpectrumChart,
+                this._doubleIntegralChart
+            ];
 
             $.each(chartsToDraw, (index, chart) => {
                 chart.draw();
@@ -90,11 +96,21 @@
             });
         }
 
+        private createDoubleIntegralChart(points: DataPoint[]): WindowChart {
+            return this._doubleIntegralChartBuilder.create({
+                containerId: this._containerId + "_double_integral",
+                points: points,
+                signalMetadata: this._signalMetadata
+            });
+        }
+
         private cleanUpCharts() {
             var chartsToDestroy: WindowChart[] = [
                 this._spectrumChart,
                 this._integralChart,
-                this._integralSpectrumChart];
+                this._integralSpectrumChart,
+                this._doubleIntegralChart
+            ];
 
             $.each(chartsToDestroy, (index, chart) => {
                 if (chart) {
