@@ -18,8 +18,8 @@ namespace DSP.Console
                 container.RegisterFrom<CompositionRoot>();
                 using (var scope = container.BeginScope())
                 {
-                    IFileParser fileParser = container.GetInstance<IFileParser>();
-                    FileParserResult parseResult = fileParser.ParseFileAsync(argument.Path).Result;
+                    IFileParserManager fileParserManager = container.GetInstance<IFileParserManager>();
+                    FileParserResult parseResult = fileParserManager.ParseFileAsync(argument.Path).Result;
                 }
             }
         }

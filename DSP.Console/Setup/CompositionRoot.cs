@@ -8,8 +8,8 @@ namespace DSP.Console.Setup
     {
         public void Compose(IServiceRegistry serviceRegistry)
         {
-            serviceRegistry.Register<IFileContentProviderFactory, FileContentProviderFactory>(new PerContainerLifetime());
-            serviceRegistry.Register<IFileParser, FileParser>();
+            serviceRegistry.Register<IFileParserFactory, FileParserFactory>(new PerContainerLifetime());
+            serviceRegistry.Register<IFileParserManager, FileParserManager>();
         }
     }
 }

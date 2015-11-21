@@ -71,6 +71,10 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.2.1\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -141,6 +145,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ErrorModel.cs" />
     <Compile Include="Models\Signal\SignalCharacteristicsViewModel.cs" />
     <Compile Include="Models\Signal\SignalDataPoint.cs" />
     <Compile Include="Models\Signal\SignalMetadataViewModel.cs" />
@@ -205,6 +210,9 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-characteristics.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-chart-builder.ts" />
@@ -219,8 +227,8 @@
     <TypeScriptCompile Include="Scripts\DSP\dsp-chart-spectrum.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-data-point.ts" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-file-uploader.ts" />
-    <Content Include="Scripts\DSP\dsp.js" />
-    <Content Include="Scripts\DSP\fft-builder.js" />
+    <Content Include="Scripts\DSP\Shim\dsp.js" />
+    <Content Include="Scripts\DSP\Shim\fft-builder.js" />
     <Content Include="Scripts\highstock\2.1.8\adapters\standalone-framework.js" />
     <Content Include="Scripts\highstock\2.1.8\adapters\standalone-framework.src.js" />
     <Content Include="Scripts\highstock\2.1.8\highcharts-3d.js" />
@@ -304,6 +312,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-window-chart.ts" />
     <TypeScriptCompile Include="Scripts\typings\dsp\fft-builder.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\highcharts\highstock.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\mustache\mustache.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\spin\spin.d.ts" />
   </ItemGroup>
@@ -336,7 +345,6 @@
     <TypeScriptCompile Include="Scripts\DSP\dsp-service.ts" />
     <TypeScriptCompile Include="Scripts\typings\bootstrap\bootstrap.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\highcharts\highcharts.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\highcharts\highstock.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery.FileUpload\jquery.fileupload.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\modernizr\modernizr.d.ts" />

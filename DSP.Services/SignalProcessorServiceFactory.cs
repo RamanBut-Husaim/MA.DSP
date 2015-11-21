@@ -6,12 +6,12 @@ namespace DSP.Services
 {
     public sealed class SignalProcessorServiceFactory : ISignalProcessorServiceFactory
     {
-        private readonly IFileParser _fileParser;
+        private readonly IFileParserManager _fileParserManager;
         private readonly ICharacteristicManagerFactory _characteristicManagerFactory;
 
-        public SignalProcessorServiceFactory(IFileParser fileParser, ICharacteristicManagerFactory characteristicManagerFactory)
+        public SignalProcessorServiceFactory(IFileParserManager fileParserManager, ICharacteristicManagerFactory characteristicManagerFactory)
         {
-            _fileParser = fileParser;
+            _fileParserManager = fileParserManager;
             _characteristicManagerFactory = characteristicManagerFactory;
         }
 
@@ -19,7 +19,11 @@ namespace DSP.Services
         {
             Throw.IfNullOrEmpty(fileName, nameof(fileName));
 
-            return new SignalProcessorService(fileName, _fileParser, _characteristicManagerFactory);
+            var signalProcessorService = new SignalProcessorService(fileName, _fileParserManager, _characteristicManagerFactory);
+
+            var logginsSignalProcessorService = new LoggingSignalProcessorService(signalProcessorService);
+
+            return logginsSignalProcessorService;
         }
     }
 }

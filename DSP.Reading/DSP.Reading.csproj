@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.2.1\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,14 +45,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Content\FileContentProvider.cs" />
-    <Compile Include="Content\FileContentProviderFactory.cs" />
-    <Compile Include="Content\IFileContentProviderFactory.cs" />
-    <Compile Include="FileParser.cs" />
+    <Compile Include="Content\FileParser.cs" />
+    <Compile Include="Content\FileParserFactory.cs" />
+    <Compile Include="Content\IFileParserFactory.cs" />
+    <Compile Include="Content\LoggingFileParser.cs" />
+    <Compile Include="FileParserManager.cs" />
     <Compile Include="Content\FileMetadata.cs" />
+    <Compile Include="FIleParserManagerFactory.cs" />
     <Compile Include="FileParserResult.cs" />
-    <Compile Include="Content\IFileContentProvider.cs" />
-    <Compile Include="IFileParser.cs" />
+    <Compile Include="Content\IFileParser.cs" />
+    <Compile Include="IFileParserManager.cs" />
+    <Compile Include="LoggingFileParserManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -56,6 +63,9 @@
       <Project>{7d34018c-35f0-495d-99cf-d17c3d354722}</Project>
       <Name>DSP.Utils</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

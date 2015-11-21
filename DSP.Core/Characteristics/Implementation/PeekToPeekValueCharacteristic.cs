@@ -5,7 +5,7 @@ namespace DSP.Core.Characteristics.Implementation
     internal sealed class PeekToPeekValueCharacteristic : CharacteristicBase<double>
     {
         private readonly ICharacteristic<double> _maxValueCharacteristic;
-        private readonly ICharacteristic<double> _minValueCharacteristic; 
+        private readonly ICharacteristic<double> _minValueCharacteristic;
 
         public PeekToPeekValueCharacteristic(SignalData signalData) : base(signalData)
         {

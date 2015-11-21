@@ -10,8 +10,9 @@ namespace DSP.Web.App_Start
     {
         public void Compose(IServiceRegistry serviceRegistry)
         {
-            serviceRegistry.Register<IFileContentProviderFactory, FileContentProviderFactory>(new PerContainerLifetime());
-            serviceRegistry.Register<IFileParser, FileParser>(new PerRequestLifeTime());
+            serviceRegistry.Register<IFileParserFactory, FileParserFactory>(new PerContainerLifetime());
+            serviceRegistry.Register<FIleParserManagerFactory>();
+            serviceRegistry.Register<IFileParserManager>((serviceFactory) => new LoggingFileParserManager(serviceFactory.GetInstance<FIleParserManagerFactory>().Create()));
             serviceRegistry.Register<ICharacteristicBuilder, CharacteristicBuilder>(new PerContainerLifetime());
             serviceRegistry.Register<ICharacteristicManagerFactory, CharacteristicManagerFactory>();
             serviceRegistry.Register<ISignalProcessorServiceFactory, SignalProcessorServiceFactory>(new PerRequestLifeTime());

@@ -6,18 +6,20 @@ using DSP.Utils;
 
 namespace DSP.Reading.Content
 {
-    public sealed class FileContentProvider : IFileContentProvider
+    public sealed class FileParser : IFileParser
     {
         private const int DefaultBufferSize = 1024;
         private readonly string _fileName;
 
-        public FileContentProvider(string fileName)
+        public FileParser(string fileName)
         {
             Throw.IfNullOrEmpty(fileName, nameof(fileName));
             _fileName = fileName;
         }
 
-        public async Task<FileParserResult> ReadEntireContentAsync()
+        public string FileName => _fileName;
+
+        public async Task<FileParserResult> ParseEntireContentAsync()
         {
             byte[] content;
             int readBytes;
@@ -43,7 +45,7 @@ namespace DSP.Reading.Content
             }
         }
 
-        public FileMetadata ReadMetadata()
+        public FileMetadata ParseMetadata()
         {
             FileMetadata result;
             using (var fileStream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.None, DefaultBufferSize, FileOptions.None))
@@ -54,7 +56,7 @@ namespace DSP.Reading.Content
             return result;
         }
 
-        public async Task<FileMetadata> ReadMetadataAsync()
+        public async Task<FileMetadata> ParseMetadataAsync()
         {
             FileMetadata result;
 
@@ -104,7 +106,7 @@ namespace DSP.Reading.Content
             return result;
         }
 
-        public IEnumerable<float> ReadContent()
+        public IEnumerable<float> ParseContent()
         {
             using (var fileStream = new FileStream(_fileName, FileMode.Open, FileAccess.Read, FileShare.None, DefaultBufferSize, FileOptions.None))
             {
@@ -112,7 +114,7 @@ namespace DSP.Reading.Content
             }
         }
 
-        public async Task<IEnumerable<float>> ReadContentAsync()
+        public async Task<IEnumerable<float>> ParseContentAsync()
         {
             IList<float> dataPoints;
 

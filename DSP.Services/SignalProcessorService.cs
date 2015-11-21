@@ -9,27 +9,29 @@ namespace DSP.Services
     public sealed class SignalProcessorService : ISignalProcessorService
     {
         private readonly string _fileName;
-        private readonly IFileParser _fileParser;
+        private readonly IFileParserManager _fileParserManager;
         private readonly ICharacteristicManagerFactory _characteristicManagerFactory;
         private ICharacteristicManager _characteristicManager;
 
         public SignalProcessorService(
             string fileName,
-            IFileParser fileParser,
+            IFileParserManager fileParserManager,
             ICharacteristicManagerFactory characteristicManagerFactory)
         {
             Throw.IfNullOrEmpty(fileName, nameof(fileName));
-            Throw.IfNull(fileParser, nameof(fileParser));
+            Throw.IfNull(fileParserManager, nameof(fileParserManager));
             Throw.IfNull(characteristicManagerFactory, nameof(characteristicManagerFactory));
 
             _fileName = fileName;
-            _fileParser = fileParser;
+            _fileParserManager = fileParserManager;
             _characteristicManagerFactory = characteristicManagerFactory;
         }
 
+        public string FileName => _fileName;
+
         public async Task<SignalInfo> ProcessFileAsync(int startPoint, int endPoint)
         {
-            await this.VerifyCharacteristicManagerCreated();
+            await this.EnsureCharacteristicManagerCreated();
 
             CharacteristicsResult characteristics = _characteristicManager.Calculate(startPoint, endPoint);
 
@@ -38,7 +40,7 @@ namespace DSP.Services
 
         public async Task<SignalInfo> ProcessFileAsync()
         {
-            await this.VerifyCharacteristicManagerCreated();
+            await this.EnsureCharacteristicManagerCreated();
 
             int startPoint = 0;
             int endPoint = _characteristicManager.SignalData.Values.Count;
@@ -46,7 +48,7 @@ namespace DSP.Services
             return await this.ProcessFileAsync(startPoint, endPoint);
         }
 
-        private async Task VerifyCharacteristicManagerCreated()
+        private async Task EnsureCharacteristicManagerCreated()
         {
             if (_characteristicManager == null)
             {
@@ -56,8 +58,10 @@ namespace DSP.Services
 
         private async Task<ICharacteristicManager> CreateCharacteristicManager()
         {
-            FileParserResult fileParserResult = await _fileParser.ParseFileAsync(_fileName);
+            FileParserResult fileParserResult = await _fileParserManager.ParseFileAsync(_fileName);
+
             SignalData signalData = SignalDataMapper.Map(fileParserResult);
+
             return _characteristicManagerFactory.Create(signalData);
         }
     }

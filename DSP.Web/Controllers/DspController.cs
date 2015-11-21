@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.SessionState;
 using DSP.Services;
+using DSP.Web.Models;
 using DSP.Web.Models.Signal;
+using NLog;
 
 namespace DSP.Web.Controllers
 {
@@ -12,6 +14,8 @@ namespace DSP.Web.Controllers
     [SessionState(SessionStateBehavior.ReadOnly)]
     public sealed class DspController : Controller
     {
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly ISignalProcessorServiceFactory _signalProcessorServiceFactory;
 
         public DspController(ISignalProcessorServiceFactory signalProcessorServiceFactory)
@@ -29,8 +33,21 @@ namespace DSP.Web.Controllers
                 string[] fileNames = fileName.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string file in fileNames)
                 {
-                    var signalViewModel = await this.ProcessSignal(file);
-                    signalsViewModel.Signals.Add(signalViewModel);
+                    try
+                    {
+                        var signalViewModel = await this.ProcessSignal(file);
+                        signalsViewModel.Signals.Add(signalViewModel);
+                        Logger.Info("The file {0} has been processed successfully.", file);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                        signalsViewModel.Errors.Add(new ErrorModel
+                        {
+                            FileName = file,
+                            Message = $"Error occured while processing the file {file}. Please, try again later."
+                        });
+                    }
                 }
             }
 

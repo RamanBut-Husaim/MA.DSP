@@ -10,6 +10,7 @@
     <h1>DSP Processing</h1>
 </div>
 <div class="container">
+    <div id="messages" class="row"></div>
     <div class="row">
         <div class="col-md-2">
             <span class="btn btn-success fileinput-button">
@@ -34,6 +35,12 @@
 </div>
 
 @section Scripts {
+    <script id="messageTemplate" type="x-tmpl-mustache">
+        <div class="alert {{ alertType }} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            {{ message }}
+        </div>
+    </script>
     <script id="chartTemplate" type="x-tmpl-mustache">
         <div id="series_{{ chartNumber }}" class="panel panel-primary">
             <div class="panel-heading">
@@ -64,8 +71,8 @@
     </script>
     <script type="text/javascript">
         $(function() {
-            var fileUploader = new Dsp.DspFileUploader('fileUpload', 'processHandler');
-            var chartBuilder = new Dsp.DspChartBuilder('chartContainer_', 'series_', 'processHandler');
+            var fileUploader = new Dsp.DspFileUploader('fileUpload', 'processHandler', 'messages');
+            var chartBuilder = new Dsp.DspChartBuilder('chartContainer_', 'series_', 'processHandler', 'messages');
             var dspService = new Dsp.DspService(fileUploader, chartBuilder);
             dspService.setup();
             window.DSP = {};
