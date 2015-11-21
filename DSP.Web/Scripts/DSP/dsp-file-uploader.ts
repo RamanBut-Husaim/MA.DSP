@@ -11,20 +11,21 @@
         public subscribeToFileUpload(): void {
             const that = this;
             $('#' + this._fileUploadControlId).fileupload({
-                dataType: 'json',
+                dataType: "json",
                 done(e, data) {
-                    $('#' + that._processButtonId)
-                        .removeClass('hidden')
-                        .attr('data-file', data.result.File);
+                    var processButton = $(`#${that._processButtonId}`);
+                    processButton.removeClass('hidden');
+                    var dataFileAttr = processButton.attr("data-file") || "";
+                    processButton.attr("data-file", `${dataFileAttr};${data.result.File}`);
                 },
                 fail(e, data) {
-                    $('#' + that._processButtonId).addClass('hidden');
+                    $("#" + that._processButtonId).addClass("hidden");
                 },
                 progressall(e, data) {
                     var progress = parseInt((data.loaded / data.total * 100).toString(), 10);
                     $("#progress .progress-bar").css(
                         "width",
-                        progress + '%'
+                        progress + "%"
                     );
                 }
             });

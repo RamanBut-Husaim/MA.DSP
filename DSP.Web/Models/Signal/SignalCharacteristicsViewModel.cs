@@ -1,6 +1,6 @@
 ﻿using DSP.Core.Characteristics;
 
-namespace DSP.Web.Models.File
+namespace DSP.Web.Models.Signal
 {
     public sealed class SignalCharacteristicsViewModel
     {

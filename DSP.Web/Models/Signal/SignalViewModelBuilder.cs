@@ -2,7 +2,7 @@
 using System.Linq;
 using DSP.Services;
 
-namespace DSP.Web.Models.File
+namespace DSP.Web.Models.Signal
 {
     public sealed class SignalViewModelBuilder
     {

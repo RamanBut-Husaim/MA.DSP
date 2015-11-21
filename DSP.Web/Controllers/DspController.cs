@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.SessionState;
 using DSP.Services;
-using DSP.Web.Models.File;
+using DSP.Web.Models.Signal;
 
 namespace DSP.Web.Controllers
 {
@@ -23,12 +23,29 @@ namespace DSP.Web.Controllers
         [Route("Process")]
         public async Task<JsonResult> ProcessFile(string fileName)
         {
+            var signalsViewModel = new SignalsViewModel();
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                string[] fileNames = fileName.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string file in fileNames)
+                {
+                    var signalViewModel = await this.ProcessSignal(file);
+                    signalsViewModel.Signals.Add(signalViewModel);
+                }
+            }
+
+            return this.Json(signalsViewModel);
+        }
+
+        private async Task<SignalViewModel> ProcessSignal(string fileName)
+        {
             string fullPath = this.GetFileFullPath(fileName);
+
             ISignalProcessorService signalProcessor = _signalProcessorServiceFactory.Create(fullPath);
             SignalInfo signalInfo = await signalProcessor.ProcessFileAsync();
             SignalViewModel signalViewModel = SignalViewModelBuilder.Create(signalInfo, fileName);
 
-            return this.Json(signalViewModel);
+            return signalViewModel;
         }
 
         protected override JsonResult Json(object data, string contentType, System.Text.Encoding contentEncoding, JsonRequestBehavior behavior)

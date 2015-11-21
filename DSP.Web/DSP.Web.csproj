@@ -141,11 +141,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\File\SignalCharacteristicsViewModel.cs" />
-    <Compile Include="Models\File\SignalDataPoint.cs" />
-    <Compile Include="Models\File\SignalMetadataViewModel.cs" />
-    <Compile Include="Models\File\SignalViewModel.cs" />
-    <Compile Include="Models\File\SignalViewModelBuilder.cs" />
+    <Compile Include="Models\Signal\SignalCharacteristicsViewModel.cs" />
+    <Compile Include="Models\Signal\SignalDataPoint.cs" />
+    <Compile Include="Models\Signal\SignalMetadataViewModel.cs" />
+    <Compile Include="Models\Signal\SignalsViewModel.cs" />
+    <Compile Include="Models\Signal\SignalViewModel.cs" />
+    <Compile Include="Models\Signal\SignalViewModelBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

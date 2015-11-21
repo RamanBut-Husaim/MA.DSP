@@ -1,7 +1,7 @@
 ﻿using DSP.Core.Signal;
 using DSP.Reading.Content;
 
-namespace DSP.Web.Models.File
+namespace DSP.Web.Models.Signal
 {
     public sealed class SignalMetadataViewModel
     {
