@@ -30,9 +30,14 @@
         </div>
     </div>
     <div id="charts" class="row">
-        <div id="series_1" class="panel panel-primary">
+    </div>
+</div>
+
+@section Scripts {
+    <script id="chartTemplate" type="x-tmpl-mustache">
+        <div id="series_{{ chartNumber }}" class="panel panel-primary">
             <div class="panel-heading">
-                Chart To Display
+                {{ chartName }}
             </div>
             <div class="panel-body">
                 <div class="row chartCharacteristics">
@@ -42,30 +47,21 @@
                     <div class="col-md-2" data-type="peekToPeek">Peek To Peek <span class="label label-default">0.0</span></div>
                     <div class="col-md-2" data-type="standardDeviation">Standard Deviation <span class="label label-default">0.0</span></div>
                 </div>
-                <div class="row chartContainer" id="chartContainer_1">
-                    Chart Container
+                <div class="row chartContainer" id="chartContainer_{{ chartNumber }}">
                 </div>
-                <div class="row chartContainer" id="chartContainer_1_spectrum">
-                    Spectrum
+                <div class="row chartContainer" id="chartContainer_{{ chartNumber }}_spectrum">
                 </div>
-                <div class="row chartContainer" id="chartContainer_1_integral">
-                    Integral
+                <div class="row chartContainer" id="chartContainer_{{ chartNumber }}_integral">
                 </div>
-                <div class="row chartContainer" id="chartContainer_1_integral_spectrum">
-                    Integral Spectrum
+                <div class="row chartContainer" id="chartContainer_{{ chartNumber }}_integral_spectrum">
                 </div>
-                <div class="row chartContainer" id="chartContainer_1_double_integral">
-                    Double Integral
+                <div class="row chartContainer" id="chartContainer_{{ chartNumber }}_double_integral">
                 </div>
-                <div class="row chartContainer" id="chartContainer_1_double_integral_spectrum">
-                    Double Integral Spectrum
+                <div class="row chartContainer" id="chartContainer_{{ chartNumber }}_double_integral_spectrum">
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-@section Scripts {
+    </script>
     <script type="text/javascript">
         $(function() {
             var fileUploader = new Dsp.DspFileUploader('fileUpload', 'processHandler');

@@ -5,7 +5,7 @@ module Dsp {
         private _chartContainerPrefix: string;
         private _seriesPrefix: string;
         private _processButtonId: string;
-        private _chartManager: ChartManager;
+        private _chartManagers: ChartManager[];
 
         constructor(
             chartContainerPrefix: string,
@@ -14,18 +14,15 @@ module Dsp {
             this._processButtonId = processButtonId;
             this._chartContainerPrefix = chartContainerPrefix;
             this._seriesPrefix = seriesPrefix;
-        }
-
-        public createCharts(data: any): void {
-            console.log("chartBuilder");
+            this._chartManagers = [];
         }
 
         public subsribeToProcess(): void {
             var url = $('#' + this._processButtonId).attr("data-url");
             $('#' + this._processButtonId).on('click', () => {
-                if (this._chartManager) {
-                    this._chartManager.destroyCharts();
-                }
+                $.each(this._chartManagers, (index, chartManager) => {
+                    chartManager.destroyCharts();
+                });
 
                 this.retrieveChartData(url);
             });
@@ -35,13 +32,28 @@ module Dsp {
             const that = this;
             var fileName = $('#' + this._processButtonId).attr("data-file");
             if (fileName) {
-                var spinner = this.spinChart(this.getChartId(1));
+                var spinner = this.spinChart("#charts");
                 $.post(url, { fileName: fileName }, (data) => {
-                    that._chartManager = new ChartManager(this.getChartId(1), this.getSeriesId(1), data);
-                    that._chartManager.drawCharts();
+                    $.each(data.Signals, (index, signalData) => {
+                        var chartManager = that.createChartManager(index, signalData);
+                        that._chartManagers.push(chartManager);
+                        chartManager.drawCharts();
+                    });
+
                     that.removeSpin(spinner);
                 }, 'json');
             }
+        }
+
+        private createChartManager(index, signalData): ChartManager {
+            var template = $("#chartTemplate").html();
+            Mustache.parse(template);
+            var renderedTemplate = Mustache.render(template, { chartNumber: index, chartName: signalData.FileName });
+            $("#charts").append(renderedTemplate);
+
+            var chartManager = new ChartManager(this.getChartId(index), this.getSeriesId(index), signalData);
+
+            return chartManager;
         }
 
         private getChartId(index: number): string {

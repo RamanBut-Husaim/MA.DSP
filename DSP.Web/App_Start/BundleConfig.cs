@@ -40,6 +40,7 @@ namespace DSP.Web
                         "~/Scripts/jQuery.FileUpload/jquery.fileupload.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include("~/Scripts/bootstrap.js", "~/Scripts/respond.js"));
+            bundles.Add(new ScriptBundle("~/bundles/mustache").Include("~/Scripts/mustache.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/bootstrap.css", "~/Content/site.css"));
             bundles.Add(new StyleBundle("~/Content/jquery-fileupload")

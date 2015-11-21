@@ -283,6 +283,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\mustache.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
@@ -303,6 +304,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <TypeScriptCompile Include="Scripts\DSP\dsp-window-chart.ts" />
     <TypeScriptCompile Include="Scripts\typings\dsp\fft-builder.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\mustache\mustache.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\spin\spin.d.ts" />
   </ItemGroup>
   <ItemGroup>
